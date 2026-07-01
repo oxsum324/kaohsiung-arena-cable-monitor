@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>高雄巨蛋鋼索預力監測報告 · 設計預覽</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./dc-shim.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23002060'%20stroke-width='1.8'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M4%2019h16'/%3E%3Cpath%20d='M5.5%2019a6.5%205.5%200%200%201%2013%200'/%3E%3Cpath%20d='M12%2013.4V19'/%3E%3Cpath%20d='M12%2013.4%207%2019'/%3E%3Cpath%20d='M12%2013.4%2017%2019'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&amp;family=Noto+Serif+TC:wght@400;600;700;900&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="cabledata.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:#F7F8FA;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;color:#111316;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:#E6EAF3}
+  canvas{display:block}
+  @keyframes hyPulseRing { 0%{box-shadow:0 0 0 0 rgba(255,59,59,.55);} 70%{box-shadow:0 0 0 13px rgba(255,59,59,0);} 100%{box-shadow:0 0 0 0 rgba(255,59,59,0);} }
+  @keyframes hyPulseDot { 0%,100%{opacity:1;} 50%{opacity:.35;} }
+  @keyframes hyGlowText { 0%,100%{text-shadow:0 0 16px rgba(255,59,59,.55),0 0 2px rgba(255,59,59,.4);} 50%{text-shadow:0 0 30px rgba(255,59,59,.9),0 0 4px rgba(255,59,59,.6);} }
+  @keyframes hyScan { 0%{transform:translateX(-120%);} 100%{transform:translateX(220%);} }
+  @keyframes hyFadeUp { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
+  @media print {
+    @page { size: A4; margin: 0; }
+    html, body { background:#fff !important; }
+    body { padding: 14mm 12mm !important; }
+    * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+    *, *::before, *::after { transition-duration:0s !important; animation-duration:.001s !important; animation-delay:-99s !important; }
+    [data-app-shell] { display:block !important; height:auto !important; overflow:visible !important; }
+    aside { display:none !important; }
+    [data-topbar] { display:none !important; }
+    main { overflow:visible !important; height:auto !important; }
+    main > div { max-width:none !important; padding:0 !important; }
+    section[data-screen-label] { display:block !important; }
+    footer { background:#001440 !important; margin-top:10mm; break-inside:avoid; }
+    div[style*="overflow-x:auto"] { overflow:visible !important; }
+    table[style*="min-width"] { min-width:0 !important; font-size:10px !important; }
+    section { break-inside:avoid; }
+    section h2 { break-after:avoid; }
+    canvas { break-inside:avoid; }
+    p, li { orphans:3; widows:3; }
+    section#sec9, section#secRX7, section#sec16 { break-before:page; }
+  }
+</style>
+</helmet>
+
+<div data-app-shell="" style="display:flex;height:100vh;overflow:hidden;background:#F7F8FA;">
+
+  <aside style="width:240px;flex:none;background:#001440;color:#fff;display:flex;flex-direction:column;height:100vh;">
+    <div style="padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.12);flex:none;">
+      <img src="assets/logo-white.svg" alt="弘一工程顧問" style="height:26px;width:auto;display:block;margin-bottom:12px;">
+      <div style="font-size:13px;font-weight:700;color:#fff;line-height:1.4;">高雄巨蛋鋼索預力監測</div>
+      
+    </div>
+    <nav style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:1px;">
+      <button onClick="{{ nav.overview.onClick }}" style="{{ nav.overview.style }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M4 19h16"></path><path d="M5.5 19a6.5 5.5 0 0 1 13 0"></path><path d="M12 13.4V19"></path><path d="M12 13.4 7 19"></path><path d="M12 13.4 17 19"></path></svg>概覽</button>
+      <button onClick="{{ nav.sec2.onClick }}" style="{{ nav.sec2.style }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M3.5 12a8.5 8.5 0 1 0 2.7-6.2L3 8"></path><path d="M3 3.5V8h4.5"></path><path d="M12 8v4.2l3 1.8"></path></svg>歷期沿革</button>
+      <button onClick="{{ nav.sec3.onClick }}" style="{{ nav.sec3.style }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><rect x="6" y="6" width="12" height="12" rx="1.5"></rect><path d="M9.5 3v3M14.5 3v3M9.5 18v3M14.5 18v3M3 9.5h3M3 14.5h3M18 9.5h3M18 14.5h3"></path></svg>儀器配置</button>
+      <button onClick="{{ nav.sec9.onClick }}" style="{{ nav.sec9.style }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M4 4v16h16"></path><path d="M5 15 9 11 12 13 16 6 20 9"></path></svg>代表性內力</button>
+      <button onClick="{{ nav.sec10.onClick }}" style="{{ nav.sec10.style }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><circle cx="11" cy="11" r="6"></circle><path d="M20 20l-4-4"></path><path d="M11 8.4v5.2M8.4 11h5.2"></path></svg>資料探查</button>
+      <button onClick="{{ nav.sec13.onClick }}" style="{{ nav.sec13.style }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M12 3l7.5 4v5c0 4.6-3.2 7.4-7.5 9-4.3-1.6-7.5-4.4-7.5-9V7Z"></path><path d="M9 12l2 2 4-4"></path></svg>訊號品質</button>
+      <button onClick="{{ nav.sec14.onClick }}" style="{{ nav.sec14.style }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M4 17a8 8 0 0 1 16 0"></path><path d="M12 17l4.5-4"></path><circle cx="12" cy="17" r="1"></circle></svg>索力現況</button>
+      <button onClick="{{ nav.secRX7.onClick }}" style="{{ nav.secRX7.style }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>預警系統</button>
+      <button onClick="{{ nav.sec15.onClick }}" style="{{ nav.sec15.style }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><rect x="4" y="4" width="16" height="16" rx="1.5"></rect><path d="M4 9.5h16M9.5 9.5V20M4 14.5h16"></path></svg>彙整表</button>
+      <button onClick="{{ nav.sec16.onClick }}" style="{{ nav.sec16.style }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><rect x="3" y="4" width="18" height="12" rx="1.5"></rect><path d="M8 20h8M12 16v4"></path><path d="M7 9l2.5 2.5L7 14"></path><path d="M13 14h4"></path></svg>CMS 監控系統</button>
+    </nav>
+    <div style="padding:12px 18px;border-top:1px solid rgba(255,255,255,.12);flex:none;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:rgba(255,255,255,.5);">HY-2026-0421-R3</div>
+  </aside>
+
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0;height:100vh;">
+    <div data-topbar="" style="height:56px;flex:none;background:#fff;border-bottom:1px solid #E6E8EC;display:flex;align-items:center;padding:0 32px;gap:16px;">
+      <div style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:17px;color:#111316;">{{ currentTitle }}</div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:10px;">
+        <button onClick="{{ printPage }}" style="font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:600;color:#002060;background:#fff;border:1px solid #002060;padding:6px 12px;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;" style-hover="background:#002060;color:#fff;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"></path><path d="M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8" rx="1"></rect></svg>列印 / PDF</button>
+      </div>
+    </div>
+    <main ref="{{ rMain }}" style="flex:1;overflow-y:auto;">
+      <div style="max-width:1100px;margin:0 auto;padding:32px 40px 60px;">
+
+  <section id="overview" data-screen-label="概覽" style="display:{{ vis.overview }};padding-bottom:10px;">
+    <hr style="height:3px;width:42px;background:#E00000;border:0;margin:0 0 16px;">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#002060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"></path><path d="M5.5 19a6.5 5.5 0 0 1 13 0"></path><path d="M12 13.4V19"></path><path d="M12 13.4 7 19"></path><path d="M12 13.4 17 19"></path><circle cx="12" cy="13.4" r="0.6"></circle></svg><span style="font-size:12px;font-weight:700;letter-spacing:.12em;color:#002060;text-transform:uppercase;">監測概要 · MONITORING OVERVIEW</span></div>
+    <h1 style="font-family:'Noto Serif TC',serif;font-weight:900;font-size:46px;line-height:1.15;letter-spacing:-.02em;color:#111316;margin:0 0 16px;">鋼索預力健康狀態監測</h1>
+    <p style="max-width:760px;font-size:16px;line-height:1.75;color:#3F4653;margin:0 0 30px;">本報告彙整 8 台振弦式應力計（Geokon FD404 VW Datalogger）之長期連續監測資料，並結合二期拉力試驗結果，作為高雄巨蛋屋頂 4 條鋼索（RX5、RY4、RX7、RY8）預力健康狀態之研判依據。以下聚焦三項核心判讀：代表性內力曲線、互動式資料探查，與索力百分比現況。</p>
+
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:#E6E8EC;border:1px solid #E6E8EC;border-radius:6px;overflow:hidden;margin-bottom:28px;">
+      <div style="background:#fff;padding:18px 16px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1.5"></rect><path d="M9.5 3v3M14.5 3v3M9.5 18v3M14.5 18v3M3 9.5h3M3 14.5h3M18 9.5h3M18 14.5h3"></path></svg><span style="font-size:11px;color:#6B7280;letter-spacing:.04em;">監測儀器</span></div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-weight:700;font-variant-numeric:tabular-nums;font-size:30px;color:#002060;">8</span><span style="font-size:12px;color:#6B7280;margin-left:4px;">台</span></div>
+      </div>
+      <div style="background:#fff;padding:18px 16px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"></path><circle cx="9" cy="7" r="1.7" fill="#fff"></circle><circle cx="15" cy="12" r="1.7" fill="#fff"></circle><circle cx="8" cy="17" r="1.7" fill="#fff"></circle></svg><span style="font-size:11px;color:#6B7280;letter-spacing:.04em;">監測通道</span></div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-weight:700;font-variant-numeric:tabular-nums;font-size:30px;color:#002060;">16</span><span style="font-size:12px;color:#6B7280;margin-left:4px;">通道</span></div>
+      </div>
+      <div style="background:#fff;padding:18px 16px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"></ellipse><path d="M5 6v12c0 1.6 3.1 3 7 3s7-1.4 7-3V6"></path><path d="M5 12c0 1.6 3.1 3 7 3s7-1.4 7-3"></path></svg><span style="font-size:11px;color:#6B7280;letter-spacing:.04em;">累計紀錄</span></div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-weight:700;font-variant-numeric:tabular-nums;font-size:30px;color:#002060;">79,831</span><span style="font-size:12px;color:#6B7280;margin-left:4px;">筆</span></div>
+      </div>
+      <div style="background:#fff;padding:18px 16px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="1.5"></rect><path d="M4 9.5h16M8.5 3v4M15.5 3v4"></path></svg><span style="font-size:11px;color:#6B7280;letter-spacing:.04em;">資料期間</span></div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-weight:700;font-variant-numeric:tabular-nums;font-size:30px;color:#002060;">288</span><span style="font-size:12px;color:#6B7280;margin-left:4px;">天</span></div>
+      </div>
+      <div style="background:#fff;padding:18px 16px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><path d="M12 7.5V12l3 2"></path></svg><span style="font-size:11px;color:#6B7280;letter-spacing:.04em;">紀錄間隔</span></div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-weight:700;font-variant-numeric:tabular-nums;font-size:30px;color:#002060;">1</span><span style="font-size:12px;color:#6B7280;margin-left:4px;">小時/筆</span></div>
+      </div>
+      <div style="background:#fff;padding:18px 16px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5v14M18.5 5v14"></path><path d="M5.5 8.5c4.5 4 8.5 4 13 0"></path><path d="M5.5 12.5c4.5 4 8.5 4 13 0"></path></svg><span style="font-size:11px;color:#6B7280;letter-spacing:.04em;">監測鋼索</span></div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-weight:700;font-variant-numeric:tabular-nums;font-size:30px;color:#002060;">4</span><span style="font-size:12px;color:#6B7280;margin-left:4px;">條</span></div>
+      </div>
+    </div>
+
+    <div style="background:#F3F5FA;border:1px solid #E6E8EC;border-left:3px solid #002060;border-radius:4px;padding:18px 22px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;">
+        <span style="width:7px;height:7px;background:#E00000;border-radius:50%;display:inline-block;"></span>
+        <span style="font-size:13px;font-weight:700;color:#002060;letter-spacing:.02em;">整體研判</span>
+      </div>
+      <p style="margin:0;font-size:14px;line-height:1.7;color:#2A2E36;"><b>RX5、RY4、RY8</b> 之代表性內力維持於設計值之 <b style="font-family:'Noto Serif TC',serif;">70–71%</b> 區間，屬服役監測基準範圍。惟 <b style="color:#B30000;">RX7</b> 呈持續下降趨勢，截至資料期末（2026/04/21）降至設計值之 <b style="font-family:'Noto Serif TC',serif;color:#B30000;">64.5%</b>，已低於行動值（67%）進入行動區間，建議優先安排現場複查確認，並研擬補拉方案。各值係 4 支應力計經三層過濾後之代表性結果。</p>
+    </div>
+  </section>
+
+  <!-- ② 歷期沿革 -->
+  <section id="sec2" data-screen-label="歷期沿革" style="display:{{ vis.sec2 }};padding-bottom:8px;">
+    <hr style="height:3px;width:42px;background:#E00000;border:0;margin:0 0 12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#002060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.7-6.2L3 8"></path><path d="M3 3.5V8h4.5"></path><path d="M12 8v4.2l3 1.8"></path></svg>
+      <h2 style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:28px;line-height:1.3;color:#111316;margin:0;">歷期監測沿革</h2>
+    </div>
+    <p style="max-width:780px;font-size:14px;line-height:1.7;color:#3F4653;margin:0;">本案監測分三期推進：一期建立 RX5、RY4 之初值基準，二期新增 RX7、RY8 監測點，三期為民國 115 年度之持續監測，即本報告之資料範圍。</p>
+
+    <div style="position:relative;margin-top:30px;">
+      <div style="position:absolute;top:5px;left:16.6%;right:16.6%;height:2px;background:#C9D2E3;z-index:0;"></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative;z-index:1;">
+
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="width:12px;height:12px;border-radius:50%;background:#002060;border:2px solid #fff;box-shadow:0 0 0 1px #C9D2E3;margin-bottom:18px;"></div>
+          <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;padding:18px;width:100%;box-shadow:0 1px 2px rgba(17,19,22,.04);">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px;"><span style="font-size:16px;font-weight:700;color:#002060;">一期</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6B7280;">民國 113.01</span></div>
+            <div style="font-size:13px;color:#111316;font-weight:600;margin-bottom:6px;">RX5、RY4 建立初值</div>
+            <p style="font-size:12.5px;line-height:1.65;color:#3F4653;margin:0 0 12px;">依拉力試驗報告（20240111）建立基準；2 條鋼索 × 2 墩座 × 2 應力計 = 8 計。</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;background:#F3F5FA;border:1px solid #E6E8EC;color:#2E4C94;padding:2px 7px;border-radius:3px;">應力計 #18391–18398</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;background:#F3F5FA;border:1px solid #E6E8EC;color:#2E4C94;padding:2px 7px;border-radius:3px;">Logger 4401–4404</span></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="width:12px;height:12px;border-radius:50%;background:#002060;border:2px solid #fff;box-shadow:0 0 0 1px #C9D2E3;margin-bottom:18px;"></div>
+          <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;padding:18px;width:100%;box-shadow:0 1px 2px rgba(17,19,22,.04);">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px;"><span style="font-size:16px;font-weight:700;color:#002060;">二期</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6B7280;">民國 113.12</span></div>
+            <div style="font-size:13px;color:#111316;font-weight:600;margin-bottom:6px;">RX7、RY8 新增監測點</div>
+            <p style="font-size:12.5px;line-height:1.65;color:#3F4653;margin:0 0 12px;">依拉力試驗報告（1131212）新增 2 條鋼索之監測；再增 8 支應力計、4 台 Datalogger。</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;background:#F3F5FA;border:1px solid #E6E8EC;color:#2E4C94;padding:2px 7px;border-radius:3px;">應力計 #18421–18428</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;background:#F3F5FA;border:1px solid #E6E8EC;color:#2E4C94;padding:2px 7px;border-radius:3px;">Logger 4405–4408</span></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="width:12px;height:12px;border-radius:50%;background:#E00000;border:2px solid #fff;box-shadow:0 0 0 1px #F1B0B0;margin-bottom:18px;"></div>
+          <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #E00000;border-radius:6px;padding:18px;width:100%;box-shadow:0 1px 2px rgba(17,19,22,.04);">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px;"><span style="font-size:16px;font-weight:700;color:#B30000;">三期</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6B7280;">民國 115 年度</span></div>
+            <div style="font-size:13px;color:#111316;font-weight:600;margin-bottom:6px;">4 條鋼索持續監測</div>
+            <p style="font-size:12.5px;line-height:1.65;color:#3F4653;margin:0 0 12px;">RX5、RY4、RX7、RY8 全數納入長期連續監測，本報告資料截止於 2026/04/21。</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;background:#FCE5E5;border:1px solid #F3B5B5;color:#B30000;padding:2px 7px;border-radius:3px;">本報告資料範圍</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;background:#F3F5FA;border:1px solid #E6E8EC;color:#2E4C94;padding:2px 7px;border-radius:3px;">16 通道 · 每小時</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ③ 儀器配置 -->
+  <section id="sec3" data-screen-label="儀器配置" style="display:{{ vis.sec3 }};padding-bottom:8px;">
+    <hr style="height:3px;width:42px;background:#E00000;border:0;margin:0 0 12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#002060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1.5"></rect><path d="M9.5 3v3M14.5 3v3M9.5 18v3M14.5 18v3M3 9.5h3M3 14.5h3M18 9.5h3M18 14.5h3"></path></svg>
+      <h2 style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:28px;line-height:1.3;color:#111316;margin:0;">儀器配置</h2>
+    </div>
+    <p style="max-width:780px;font-size:14px;line-height:1.7;color:#3F4653;margin:0;">本案共佈設 8 台 Geokon FD404 振弦式 Datalogger、16 支應力計；每條鋼索於兩端錨頭墩座各配置 2 支應力計。一期（RX5、RY4）於民國 113 年建立初值，二期（RX7、RY8）於同年底新增監測點。</p>
+
+    <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px rgba(17,19,22,.04);margin-top:22px;">
+      <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:880px;">
+        <thead>
+          <tr style="background:#002060;color:#fff;">
+            <th style="text-align:left;padding:12px 14px;font-size:12px;font-weight:600;">Datalogger</th>
+            <th style="text-align:left;padding:12px 14px;font-size:12px;font-weight:600;">鋼索 / 墩座</th>
+            <th style="text-align:left;padding:12px 14px;font-size:12px;font-weight:600;">期別</th>
+            <th style="text-align:left;padding:12px 14px;font-size:12px;font-weight:600;">應力計（Ch1 · Ch2）</th>
+            <th style="text-align:left;padding:12px 14px;font-size:12px;font-weight:600;">首筆時間</th>
+            <th style="text-align:left;padding:12px 14px;font-size:12px;font-weight:600;">採樣間隔</th>
+            <th style="text-align:right;padding:12px 14px;font-size:12px;font-weight:600;">電池 (V)</th>
+            <th style="text-align:right;padding:12px 14px;font-size:12px;font-weight:600;">紀錄筆數</th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{ rows3 }}" as="r" hint-placeholder-count="0">
+            <tr style="border-top:1px solid #E6E8EC;">
+              <td style="padding:11px 14px;font-family:'JetBrains Mono',monospace;font-weight:600;color:#002060;">FD404-{{ r.sn }}</td>
+              <td style="padding:11px 14px;color:#111316;"><b>{{ r.cable }}</b> · {{ r.pier }}</td>
+              <td style="padding:11px 14px;"><span style="display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;{{ r.phaseStyle }}">{{ r.phase }}</span></td>
+              <td style="padding:11px 14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#3F4653;">{{ r.sensors }}</td>
+              <td style="padding:11px 14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#3F4653;">{{ r.first }}</td>
+              <td style="padding:11px 14px;color:#3F4653;">{{ r.interval }}</td>
+              <td style="padding:11px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;color:#111316;">{{ r.batt }}</td>
+              <td style="padding:11px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;font-weight:500;color:#111316;">{{ r.recs }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+      </div>
+    </div>
+    <p style="font-size:12px;line-height:1.7;color:#6B7280;margin:16px 0 0;">※ 通道 ↔ 鋼索／墩座對應關係業經業主確認（民國 115 年 5 月 26 日）。二期部分 Datalogger 採 25–30 分鐘採樣，本報告已統一重新取樣為每小時一筆以利跨儀器比較。</p>
+  </section>
+
+  <!-- ⑨ 鋼索代表性內力 -->
+  <section id="sec9" data-screen-label="鋼索代表性內力" style="display:{{ vis.sec9 }};padding-bottom:8px;">
+    <hr style="height:3px;width:42px;background:#E00000;border:0;margin:0 0 12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#002060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16h16"></path><path d="M5 15 9 11 12 13 16 6 20 9"></path></svg>
+      <h2 style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:28px;line-height:1.3;color:#111316;margin:0;">鋼索代表性內力 <span style="color:#E00000;font-size:16px;font-family:'Noto Sans TC',sans-serif;font-weight:700;border-left:3px solid #E00000;padding-left:9px;margin-left:4px;vertical-align:middle;">主要判讀依據</span></h2>
+    </div>
+    <p style="max-width:780px;font-size:14px;line-height:1.7;color:#3F4653;margin:0;">對每條鋼索之 4 個感測器，經三層級聯過濾後取最接近 70% 基準者作為代表性內力。當部分感測器訊號異常時，過濾機制可自動排除，確保曲線反映鋼索真實受力趨勢。</p>
+
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;margin:22px 0 16px;">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;font-size:11.5px;color:#3F4653;">
+        <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:20px;height:2px;background:#002060;display:inline-block;"></span>代表性內力</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:20px;height:0;border-top:2px dashed #2E4C94;display:inline-block;"></span>基準 70%</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:20px;height:0;border-top:2px dashed #B8860B;display:inline-block;"></span>行動 67%</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:20px;height:0;border-top:2px dashed #E00000;display:inline-block;"></span>破壞 60%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:11px;">
+        <span style="font-size:12px;font-weight:600;color:#3F4653;letter-spacing:.04em;">時間聚合</span>
+        <div style="display:inline-flex;border:1px solid #D4D7DC;border-radius:6px;overflow:hidden;background:#fff;">
+          <sc-for list="{{ agg9Btns }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.onClick }}" style="{{ b.style }}">{{ b.label }}</button></sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;">
+      <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;padding:18px 18px 14px;min-width:0;box-shadow:0 1px 2px rgba(17,19,22,.04);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+          <div style="display:flex;align-items:baseline;gap:8px;"><span style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;color:#002060;">RX5</span><span style="font-size:11px;color:#6B7280;">PV560 · 設計 <b style="font-family:'Noto Serif TC',serif;">2,024</b> kN</span></div>
+          <div style="text-align:right;"><div style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:18px;color:#111316;">{{ c9.RX5.pctText }}</div><div style="font-size:10.5px;color:#6B7280;">現況 {{ c9.RX5.currentText }} kN</div></div>
+        </div>
+        <div style="position:relative;height:272px;"><canvas ref="{{ r9.RX5 }}"></canvas></div>
+      </div>
+      <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;padding:18px 18px 14px;min-width:0;box-shadow:0 1px 2px rgba(17,19,22,.04);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+          <div style="display:flex;align-items:baseline;gap:8px;"><span style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;color:#002060;">RY4</span><span style="font-size:11px;color:#6B7280;">PV560 · 設計 <b style="font-family:'Noto Serif TC',serif;">2,016</b> kN</span></div>
+          <div style="text-align:right;"><div style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:18px;color:#111316;">{{ c9.RY4.pctText }}</div><div style="font-size:10.5px;color:#6B7280;">現況 {{ c9.RY4.currentText }} kN</div></div>
+        </div>
+        <div style="position:relative;height:272px;"><canvas ref="{{ r9.RY4 }}"></canvas></div>
+      </div>
+      <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;padding:18px 18px 14px;min-width:0;box-shadow:0 1px 2px rgba(17,19,22,.04);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+          <div style="display:flex;align-items:baseline;gap:8px;"><span style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;color:#002060;">RX7</span><span style="font-size:11px;color:#6B7280;">PV560 · 設計 <b style="font-family:'Noto Serif TC',serif;">1,966</b> kN</span></div>
+          <div style="text-align:right;"><div style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:18px;color:#111316;">{{ c9.RX7.pctText }}</div><div style="font-size:10.5px;color:#6B7280;">現況 {{ c9.RX7.currentText }} kN</div></div>
+        </div>
+        <div style="position:relative;height:272px;"><canvas ref="{{ r9.RX7 }}"></canvas></div>
+      </div>
+      <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;padding:18px 18px 14px;min-width:0;box-shadow:0 1px 2px rgba(17,19,22,.04);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;">
+          <div style="display:flex;align-items:baseline;gap:8px;"><span style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;color:#002060;">RY8</span><span style="font-size:11px;color:#6B7280;">PV720 · 設計 <b style="font-family:'Noto Serif TC',serif;">2,523</b> kN</span></div>
+          <div style="text-align:right;"><div style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:18px;color:#111316;">{{ c9.RY8.pctText }}</div><div style="font-size:10.5px;color:#6B7280;">現況 {{ c9.RY8.currentText }} kN</div></div>
+        </div>
+        <div style="position:relative;height:272px;"><canvas ref="{{ r9.RY8 }}"></canvas></div>
+      </div>
+    </div>
+    <p style="font-size:12px;line-height:1.7;color:#6B7280;margin:16px 0 0;">※ 切換「週均」可觀察長期衰減趨勢；「日均」觀察中期週期；「每小時」可見日溫差與活動荷重之即時影響。代表值觸及行動／破壞值時，係 4 個感測器中至少 3 個一致呈現之真實狀態。</p>
+  </section>
+
+  <!-- ⑩ 互動式資料探查 -->
+  <section id="sec10" data-screen-label="互動式資料探查" style="display:{{ vis.sec10 }};padding-bottom:8px;">
+    <hr style="height:3px;width:42px;background:#E00000;border:0;margin:0 0 12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#002060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"></circle><path d="M20 20l-4-4"></path><path d="M11 8.4v5.2M8.4 11h5.2"></path></svg>
+      <h2 style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:28px;line-height:1.3;color:#111316;margin:0;">互動式資料探查 <span style="color:#6B7280;font-size:16px;font-family:'Noto Sans TC',sans-serif;font-weight:500;">· 雙列獨立切換</span></h2>
+    </div>
+    <p style="max-width:780px;font-size:14px;line-height:1.7;color:#3F4653;margin:0;">選擇鋼索與時間單位，檢視 4 個通道之換算絕對軸力 F_abs，並疊加平均值與代表值。圖例可點擊隱藏／顯示個別線條。兩列選擇互相獨立。</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:26px;margin:22px 0 16px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:12px;font-weight:600;color:#3F4653;letter-spacing:.04em;min-width:42px;">鋼索</span>
+        <div style="display:inline-flex;border:1px solid #D4D7DC;border-radius:6px;overflow:hidden;background:#fff;">
+          <sc-for list="{{ cable10Btns }}" as="b" hint-placeholder-count="4"><button onClick="{{ b.onClick }}" style="{{ b.style }}">{{ b.label }}</button></sc-for>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:12px;font-weight:600;color:#3F4653;letter-spacing:.04em;min-width:56px;">時間單位</span>
+        <div style="display:inline-flex;border:1px solid #D4D7DC;border-radius:6px;overflow:hidden;background:#fff;">
+          <sc-for list="{{ unit10Btns }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.onClick }}" style="{{ b.style }}">{{ b.label }}</button></sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;padding:20px;box-shadow:0 1px 2px rgba(17,19,22,.04);">
+      <div style="position:relative;">
+        <div style="position:absolute;top:6px;left:6px;z-index:5;background:rgba(255,255,255,.94);border:1px solid #E6E8EC;border-left:3px solid #002060;border-radius:4px;padding:10px 14px;">
+          <div style="font-size:12px;font-weight:700;color:#002060;margin-bottom:6px;">{{ info10.name }} <span style="color:#6B7280;font-weight:400;font-size:11px;">{{ info10.type }}</span></div>
+          <div style="display:grid;grid-template-columns:auto auto;gap:3px 14px;font-size:11px;color:#3F4653;">
+            <span>設計張力</span><span style="font-family:'JetBrains Mono',monospace;text-align:right;color:#111316;">{{ info10.design }} kN</span>
+            <span style="color:#2E4C94;">基準 70%</span><span style="font-family:'JetBrains Mono',monospace;text-align:right;color:#2E4C94;">{{ info10.t70 }} kN</span>
+            <span style="color:#B8860B;">行動 67%</span><span style="font-family:'JetBrains Mono',monospace;text-align:right;color:#B8860B;">{{ info10.t67 }} kN</span>
+            <span style="color:#E00000;">破壞 60%</span><span style="font-family:'JetBrains Mono',monospace;text-align:right;color:#E00000;">{{ info10.t60 }} kN</span>
+          </div>
+        </div>
+        <div style="position:relative;height:440px;"><canvas ref="{{ r10 }}"></canvas></div>
+      </div>
+    </div>
+    <p style="font-size:12px;line-height:1.7;color:#6B7280;margin:16px 0 0;">※ 各通道對應該鋼索兩端錨頭墩座之振弦式應力計（標籤如 RX5-Z32-1）；數值為依 Channel Offset 初值（F₀）與監測首 7 日基準換算之絕對軸力 F_abs。橘色粗線為通道平均值，深藍虛線為代表值（最接近 70% 基準者）。經三層過濾自動排除之斷訊／漂移時段，於曲線中呈現缺口。</p>
+  </section>
+
+  <!-- ⑬ 訊號品質檢核 -->
+  <section id="sec13" data-screen-label="訊號品質檢核" style="display:{{ vis.sec13 }};padding-bottom:8px;">
+    <hr style="height:3px;width:42px;background:#E00000;border:0;margin:0 0 12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#002060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 4v5c0 4.6-3.2 7.4-7.5 9-4.3-1.6-7.5-4.4-7.5-9V7Z"></path><path d="M9 12l2 2 4-4"></path></svg>
+      <h2 style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:28px;line-height:1.3;color:#111316;margin:0;">訊號品質檢核</h2>
+    </div>
+    <p style="max-width:820px;font-size:14px;line-height:1.7;color:#3F4653;margin:0;">呈現各監測通道之訊號有效率——即通過三層過濾之讀值佔該通道監測期間之比例。有效率高，代表該通道之代表值判讀係基於穩定、連續之量測，可信度高；被排除者多為斷訊或漂移時段。</p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#E6E8EC;border:1px solid #E6E8EC;border-radius:6px;overflow:hidden;margin-top:22px;">
+      <div style="background:#fff;padding:18px 16px;">
+        <div style="font-size:11px;color:#6B7280;letter-spacing:.04em;margin-bottom:7px;">平均訊號有效率</div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-weight:700;font-variant-numeric:tabular-nums;font-size:28px;color:#002060;">{{ qSummary.avgText }}</span></div>
+      </div>
+      <div style="background:#fff;padding:18px 16px;">
+        <div style="font-size:11px;color:#6B7280;letter-spacing:.04em;margin-bottom:7px;">有效率 ≥ 90% 之通道</div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-weight:700;font-variant-numeric:tabular-nums;font-size:28px;color:#002060;">{{ qSummary.goodText }}</span></div>
+      </div>
+      <div style="background:#fff;padding:18px 16px;">
+        <div style="font-size:11px;color:#6B7280;letter-spacing:.04em;margin-bottom:7px;">有效率最低通道</div>
+        <div><span style="font-family:'Noto Serif TC',serif;font-weight:700;font-variant-numeric:tabular-nums;font-size:17px;color:#111316;">{{ qSummary.worstText }}</span></div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px rgba(17,19,22,.04);margin-top:20px;">
+      <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:760px;">
+        <thead>
+          <tr style="background:#002060;color:#fff;">
+            <th style="text-align:left;padding:12px 14px;font-size:12px;font-weight:600;">通道</th>
+            <th style="text-align:left;padding:12px 14px;font-size:12px;font-weight:600;width:34%;">訊號有效率</th>
+            <th style="text-align:right;padding:12px 14px;font-size:12px;font-weight:600;">有效筆數</th>
+            <th style="text-align:right;padding:12px 14px;font-size:12px;font-weight:600;">排除筆數</th>
+            <th style="text-align:right;padding:12px 14px;font-size:12px;font-weight:600;">最長斷訊</th>
+            <th style="text-align:center;padding:12px 14px;font-size:12px;font-weight:600;">評等</th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{ quality13 }}" as="q" hint-placeholder-count="0">
+            <tr style="border-top:1px solid #E6E8EC;">
+              <td style="padding:11px 14px;font-family:'JetBrains Mono',monospace;font-weight:600;color:#002060;">{{ q.label }}</td>
+              <td style="padding:11px 14px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="flex:1;height:8px;background:#EEF0F3;border-radius:999px;overflow:hidden;"><div style="height:100%;border-radius:999px;{{ q.barStyle }}"></div></div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#111316;min-width:48px;text-align:right;">{{ q.rateText }}</span>
+                </div>
+              </td>
+              <td style="padding:11px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;color:#111316;">{{ q.validText }}</td>
+              <td style="padding:11px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;color:#6B7280;">{{ q.excludedText }}</td>
+              <td style="padding:11px 14px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;color:#3F4653;">{{ q.gapText }}</td>
+              <td style="padding:11px 14px;text-align:center;"><span style="display:inline-block;font-size:11px;font-weight:600;padding:2px 10px;border-radius:999px;background:{{ q.stBg }};color:{{ q.stColor }};">{{ q.stLabel }}</span></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+      </div>
+    </div>
+    <p style="font-size:12px;line-height:1.7;color:#6B7280;margin:16px 0 0;">※ 有效率＝通過三層過濾之讀值 ÷ 該通道監測期間總時數（以每小時重取樣為基準）。評等：≥98% 優良、≥90% 良好、≥70% 普通、&lt;70% 不佳。斷訊時段已由過濾機制自動排除，不影響代表值之判讀。</p>
+  </section>
+
+  <!-- ⑭ 索力百分比現況 -->
+  <section id="sec14" data-screen-label="索力百分比現況" style="display:{{ vis.sec14 }};padding-bottom:8px;">
+    <hr style="height:3px;width:42px;background:#E00000;border:0;margin:0 0 12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#002060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17a8 8 0 0 1 16 0"></path><path d="M12 17l4.5-4"></path><circle cx="12" cy="17" r="1"></circle></svg>
+      <h2 style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:28px;line-height:1.3;color:#111316;margin:0;">索力百分比現況</h2>
+    </div>
+    <p style="max-width:780px;font-size:14px;line-height:1.7;color:#3F4653;margin:0;">各鋼索代表性內力佔設計張力之百分比現況，對照服役監測三階段門檻。指針位置即現況代表值；色帶由左至右為破壞、行動、觀察、基準四區。</p>
+
+    <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;padding:8px 26px 24px;margin-top:22px;box-shadow:0 1px 2px rgba(17,19,22,.04);">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;padding:16px 0 4px;font-size:11.5px;color:#3F4653;">
+        <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:16px;height:11px;background:#F1B0B0;border-radius:2px;display:inline-block;"></span>破壞 &lt;60%</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:16px;height:11px;background:#FCE0E0;border-radius:2px;display:inline-block;"></span>行動 60–67%</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:16px;height:11px;background:#FBF2DB;border-radius:2px;display:inline-block;"></span>觀察 67–70%</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:16px;height:11px;background:#E3F1EA;border-radius:2px;display:inline-block;"></span>基準 ≥70%</span>
+      </div>
+      <sc-for list="{{ cards14 }}" as="c" hint-placeholder-count="4">
+        <div style="padding:16px 0;border-top:1px solid #E6E8EC;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:11px;gap:12px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:baseline;gap:9px;"><span style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;color:#002060;">{{ c.name }}</span><span style="font-size:11px;color:#6B7280;">{{ c.type }} · 設計 {{ c.designText }} kN</span></div>
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div style="text-align:right;"><span style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:21px;color:#111316;">{{ c.pctText }}</span><span style="font-size:11px;color:#6B7280;margin-left:7px;">{{ c.currentText }} kN</span></div>
+              <span style="font-size:11px;font-weight:600;padding:3px 11px;border-radius:999px;background:{{ c.statusBg }};color:{{ c.statusColor }};white-space:nowrap;">{{ c.statusLabel }}</span>
+            </div>
+          </div>
+          <div style="position:relative;height:34px;border-radius:4px;overflow:hidden;display:flex;border:1px solid #E6E8EC;">
+            <div style="{{ c.z1 }}"></div><div style="{{ c.z2 }}"></div><div style="{{ c.z3 }}"></div><div style="{{ c.z4 }}"></div>
+            <div style="position:absolute;top:0;bottom:0;width:2px;background:#001440;transform:translateX(-50%);{{ c.needleStyle }}"></div>
+            <div style="position:absolute;top:-3px;width:11px;height:11px;background:#001440;border:2px solid #fff;border-radius:50%;transform:translateX(-50%);box-shadow:0 1px 3px rgba(0,0,0,.35);{{ c.needleStyle }}"></div>
+          </div>
+          <div style="position:relative;height:15px;margin-top:4px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#9CA3AF;">
+            <span style="position:absolute;transform:translateX(-50%);{{ c.t60Style }}">60</span>
+            <span style="position:absolute;transform:translateX(-50%);{{ c.t67Style }}">67</span>
+            <span style="position:absolute;transform:translateX(-50%);{{ c.t70Style }}">70</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <p style="font-size:12px;line-height:1.7;color:#6B7280;margin:16px 0 0;">※ 門檻依據：基準值 70%（現況代表）、行動值 67%（規劃補拉）、破壞值 60%（立即處置），並參酌 fib Bulletin 89、PTI DC45.1-18、SETRA Recommendations 等國際工程慣例。</p>
+  </section>
+
+  <!-- 鋼索預警系統 -->
+  <section id="secRX7" data-screen-label="預警系統" style="display:{{ vis.secRX7 }};padding-bottom:8px;">
+    <hr style="height:3px;width:42px;background:#E00000;border:0;margin:0 0 12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B30000" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+      <h2 style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:28px;line-height:1.3;color:#111316;margin:0;">鋼索預警系統</h2>
+    </div>
+    <p style="max-width:820px;font-size:14px;line-height:1.7;color:#3F4653;margin:0;">系統持續監控 4 條鋼索之代表性內力，即時比對服役監測門檻；一旦有鋼索跌破行動值即自動高亮告警，並產生衰減推估與建議處置。</p>
+
+    <div style="position:relative;margin-top:22px;border-radius:10px;overflow:hidden;background:radial-gradient(120% 160% at 15% 0%,#0B1330 0%,#04070F 62%);border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 50px rgba(0,0,0,.35);">
+
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;overflow:hidden;pointer-events:none;">
+        <div style="width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(122,166,255,.9),transparent);animation:hyScan 3.2s linear infinite;"></div>
+      </div>
+
+      <div style="padding:26px 28px 30px;">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px;">
+          <div style="display:flex;align-items:center;gap:9px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#FF3B3B;box-shadow:0 0 8px rgba(255,59,59,.9);display:inline-block;animation:hyPulseDot 1.4s ease-in-out infinite;"></span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:rgba(255,255,255,.6);text-transform:uppercase;">Live Monitoring · 即時監控中</span>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.4);">資料截止 2026/04/21</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;">
+          <sc-for list="{{ healthCards }}" as="h" hint-placeholder-count="4">
+            <div style="border-radius:8px;padding:16px 16px 14px;{{ h.cardStyle }}">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:#fff;">{{ h.name }}</span>
+                <span style="width:8px;height:8px;border-radius:50%;background:{{ h.dotColor }};display:inline-block;box-shadow:0 0 7px {{ h.dotColor }};{{ h.dotAnim }}"></span>
+              </div>
+              <div style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:26px;color:#fff;font-variant-numeric:tabular-nums;">{{ h.pctText }}</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:4px;">{{ h.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,59,59,.35);padding:22px 24px;margin-bottom:20px;">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px;flex-wrap:wrap;">
+            <span style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#FF7A7A;text-transform:uppercase;padding:3px 9px;border:1px solid rgba(255,59,59,.5);border-radius:999px;">告警鋼索</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#fff;">{{ criticalName }}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;">
+            <div>
+              <div style="font-family:'Noto Serif TC',serif;font-weight:900;font-size:56px;line-height:1;color:#FF5A5A;animation:hyGlowText 2.4s ease-in-out infinite;">{{ decay.pctText }}</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:6px;">現況 {{ decay.currentText }} kN</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+              <div>
+                <div style="font-size:10.5px;color:rgba(255,255,255,.45);letter-spacing:.04em;margin-bottom:5px;">衰減速率</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:17px;color:#FFC454;">{{ decay.rateText }}<span style="font-size:11px;color:rgba(255,255,255,.4);">/月</span></div>
+              </div>
+              <div>
+                <div style="font-size:10.5px;color:rgba(255,255,255,.45);letter-spacing:.04em;margin-bottom:5px;">跌破行動值</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:15px;color:#fff;">{{ decay.actionText }}</div>
+              </div>
+              <div>
+                <div style="font-size:10.5px;color:rgba(255,255,255,.45);letter-spacing:.04em;margin-bottom:5px;">預估觸及破壞值</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:15px;color:#FF5A5A;">{{ decay.breakText }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+          <div style="border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);padding:18px;min-width:0;">
+            <div style="font-size:12.5px;font-weight:600;color:#fff;margin-bottom:2px;">衰減趨勢與推估</div>
+            <div style="font-size:10.5px;color:rgba(255,255,255,.45);margin-bottom:10px;">日均代表性內力（藍）與線性回歸外推（紅虛線）</div>
+            <div style="position:relative;height:280px;"><canvas ref="{{ rRX7 }}"></canvas></div>
+          </div>
+          <div style="border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);padding:18px;min-width:0;">
+            <div style="font-size:12.5px;font-weight:600;color:#fff;margin-bottom:2px;">跨索比對</div>
+            <div style="font-size:10.5px;color:rgba(255,255,255,.45);margin-bottom:10px;">排除溫度／季節等共同因素，僅告警鋼索呈現持續衰減</div>
+            <div style="position:relative;height:280px;"><canvas ref="{{ rCompare }}"></canvas></div>
+          </div>
+        </div>
+
+        <div style="border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);padding:20px 22px;">
+          <div style="font-size:12.5px;font-weight:700;color:#fff;margin-bottom:14px;letter-spacing:.02em;">建議處置流程</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <span style="width:22px;height:22px;border-radius:50%;background:rgba(255,59,59,.15);border:1px solid rgba(255,59,59,.5);color:#FF7A7A;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;">1</span>
+              <div style="font-size:12.5px;font-weight:600;color:#fff;">現場複查</div>
+              <div style="font-size:11.5px;line-height:1.6;color:rgba(255,255,255,.55);">安排告警鋼索兩端錨頭與應力計之現場勘查，確認衰減係真實預力損失或量測因素。</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <span style="width:22px;height:22px;border-radius:50%;background:rgba(255,196,84,.15);border:1px solid rgba(255,196,84,.5);color:#FFC454;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;">2</span>
+              <div style="font-size:12.5px;font-weight:600;color:#fff;">研擬補拉方案</div>
+              <div style="font-size:11.5px;line-height:1.6;color:rgba(255,255,255,.55);">編列預算並安排施工檔期，於觸及破壞值前完成補拉規劃。</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <span style="width:22px;height:22px;border-radius:50%;background:rgba(122,166,255,.15);border:1px solid rgba(122,166,255,.5);color:#7AA6FF;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;">3</span>
+              <div style="font-size:12.5px;font-weight:600;color:#fff;">加密監測</div>
+              <div style="font-size:11.5px;line-height:1.6;color:rgba(255,255,255,.55);">提高告警鋼索之監測與複核頻率，持續追蹤趨勢是否惡化。</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <p style="font-size:12px;line-height:1.7;color:#6B7280;margin:16px 0 0;">※ 線性回歸為簡化趨勢推估，實際衰減可能受溫度、活動荷重與季節因素影響而呈非線性；推估時程僅供決策參考，應以現場複查結果為準。內文所指鋼索編號（如 RX7）為業主確認之實際編號；系統會自動追蹤任一條鋼索觸發告警。</p>
+  </section>
+
+  <!-- ⑮ 彙整表 -->
+  <section id="sec15" data-screen-label="彙整表" style="display:{{ vis.sec15 }};padding-bottom:8px;">
+    <hr style="height:3px;width:42px;background:#E00000;border:0;margin:0 0 12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#002060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="1.5"></rect><path d="M4 9.5h16M9.5 9.5V20M4 14.5h16"></path></svg>
+      <h2 style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:28px;line-height:1.3;color:#111316;margin:0;">彙整表</h2>
+    </div>
+    <p style="max-width:780px;font-size:14px;line-height:1.7;color:#3F4653;margin:0;">四條鋼索之設計張力、服役監測三階段門檻，與截至資料期末（2026/04/21）之代表性內力現況一覽。數值單位為 kN，皆為 4 支應力計經三層過濾後之結果。</p>
+
+    <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;overflow:hidden;box-shadow:0 1px 2px rgba(17,19,22,.04);margin-top:22px;">
+      <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:820px;">
+        <thead>
+          <tr style="background:#002060;color:#fff;">
+            <th style="text-align:left;padding:12px 14px;font-size:12px;font-weight:600;letter-spacing:.02em;">鋼索</th>
+            <th style="text-align:left;padding:12px 14px;font-size:12px;font-weight:600;letter-spacing:.02em;">型號</th>
+            <th style="text-align:right;padding:12px 14px;font-size:12px;font-weight:600;letter-spacing:.02em;">設計張力</th>
+            <th style="text-align:right;padding:12px 14px;font-size:12px;font-weight:600;letter-spacing:.02em;color:#B7C2DC;">基準 70%</th>
+            <th style="text-align:right;padding:12px 14px;font-size:12px;font-weight:600;letter-spacing:.02em;color:#EAD08A;">行動 67%</th>
+            <th style="text-align:right;padding:12px 14px;font-size:12px;font-weight:600;letter-spacing:.02em;color:#F3B5B5;">破壞 60%</th>
+            <th style="text-align:right;padding:12px 14px;font-size:12px;font-weight:600;letter-spacing:.02em;">現況內力</th>
+            <th style="text-align:right;padding:12px 14px;font-size:12px;font-weight:600;letter-spacing:.02em;">佔設計值</th>
+            <th style="text-align:left;padding:12px 14px;font-size:12px;font-weight:600;letter-spacing:.02em;">管理狀態</th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{ rows15 }}" as="r" hint-placeholder-count="0">
+            <tr style="border-top:1px solid #E6E8EC;">
+              <td style="padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:#002060;">{{ r.name }}</td>
+              <td style="padding:12px 14px;color:#3F4653;">{{ r.type }}</td>
+              <td style="padding:12px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;font-weight:500;color:#111316;">{{ r.designText }}</td>
+              <td style="padding:12px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;color:#2E4C94;">{{ r.t70Text }}</td>
+              <td style="padding:12px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;color:#B8860B;">{{ r.t67Text }}</td>
+              <td style="padding:12px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;color:#E00000;">{{ r.t60Text }}</td>
+              <td style="padding:12px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;{{ r.curStyle }}">{{ r.currentText }}</td>
+              <td style="padding:12px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;{{ r.curStyle }}">{{ r.pctText }}</td>
+              <td style="padding:12px 14px;"><span style="display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap;background:{{ r.statusBg }};color:{{ r.statusColor }};">{{ r.statusLabel }}</span></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+      </div>
+    </div>
+    <p style="font-size:12px;line-height:1.7;color:#6B7280;margin:16px 0 0;">※ 管理狀態係依現況內力佔設計值百分比對照服役監測門檻研判：≥70% 基準區間（維持例行監測）、67–70% 基準下緣（持續觀察）、60–67% 行動區間（規劃補拉）、&lt;60% 破壞風險（立即處置）。RX7 現況已低於行動值，建議優先處置。</p>
+  </section>
+
+  <!-- ⑯ CMS 監控系統 -->
+  <section id="sec16" data-screen-label="CMS 監控系統" style="display:{{ vis.sec16 }};padding-bottom:8px;">
+    <hr style="height:3px;width:42px;background:#E00000;border:0;margin:0 0 12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#002060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"></rect><path d="M8 20h8M12 16v4"></path><path d="M7 9l2.5 2.5L7 14"></path><path d="M13 14h4"></path></svg>
+      <h2 style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:28px;line-height:1.3;color:#111316;margin:0;">CMS 監控系統</h2>
+    </div>
+    <p style="max-width:780px;font-size:14px;line-height:1.7;color:#3F4653;margin:0;">監測資料經 CMS（Cable Monitoring System）自動彙整、換算與門檻比對。系統支援上下雙限警報，並依施工／服役階段套用不同門檻。</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:22px;">
+      <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;padding:20px;box-shadow:0 1px 2px rgba(17,19,22,.04);">
+        <div style="font-size:15px;font-weight:700;color:#111316;margin-bottom:4px;">上下雙限警報</div>
+        <p style="font-size:13px;line-height:1.7;color:#3F4653;margin:0 0 16px;">施工張拉階段採<b>上限</b>門檻（過拉檢測）；服役監測階段採<b>下限</b>門檻（衰減監測）。本報告屬服役階段，故以下限判讀。</p>
+        <div style="display:flex;justify-content:space-between;font-size:10.5px;margin-bottom:6px;"><span style="color:#B30000;font-weight:600;">服役下限 · 衰減監測</span><span style="color:#002060;font-weight:600;">設計 100%</span><span style="color:#B8860B;font-weight:600;">施工上限 · 過拉檢測</span></div>
+        <div style="position:relative;height:30px;border-radius:4px;overflow:hidden;display:flex;border:1px solid #E6E8EC;">
+          <div style="width:6.25%;background:#F1B0B0;"></div><div style="width:8.75%;background:#FCE0E0;"></div><div style="width:3.75%;background:#FBF2DB;"></div><div style="width:56.25%;background:#E3F1EA;"></div><div style="width:18.75%;background:#FBF2DB;"></div><div style="width:6.25%;background:#F1B0B0;"></div>
+          <div style="position:absolute;top:-2px;bottom:-2px;left:56.25%;width:2px;background:#002060;transform:translateX(-50%);"></div>
+        </div>
+        <div style="position:relative;height:14px;margin-top:4px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#6B7280;">
+          <span style="position:absolute;transform:translateX(-50%);left:6.25%;">60</span><span style="position:absolute;transform:translateX(-50%);left:15%;">67</span><span style="position:absolute;transform:translateX(-50%);left:18.75%;">70</span><span style="position:absolute;transform:translateX(-50%);left:56.25%;color:#002060;">100</span><span style="position:absolute;transform:translateX(-50%);left:75%;">115</span><span style="position:absolute;transform:translateX(-50%);left:93.75%;">130</span>
+        </div>
+        <div style="font-size:11px;color:#6B7280;margin-top:8px;">下限：70% 基準 / 67% 行動 / 60% 破壞　·　上限：+15% 警戒 / +30% 行動</div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;padding:20px;box-shadow:0 1px 2px rgba(17,19,22,.04);">
+        <div style="font-size:15px;font-weight:700;color:#111316;margin-bottom:4px;">通道對應架構</div>
+        <p style="font-size:13px;line-height:1.7;color:#3F4653;margin:0 0 16px;">16 個監測通道對應 4 條鋼索、每條 2 墩座、每墩座 2 支應力計；對應關係業經業主確認（民國 115 年 5 月 26 日）。</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:center;">
+          <div style="flex:1;"><div style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:26px;color:#002060;">4</div><div style="font-size:11px;color:#6B7280;">鋼索</div></div>
+          <div style="color:#C9D2E3;font-size:16px;">×</div>
+          <div style="flex:1;"><div style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:26px;color:#002060;">2</div><div style="font-size:11px;color:#6B7280;">墩座</div></div>
+          <div style="color:#C9D2E3;font-size:16px;">×</div>
+          <div style="flex:1;"><div style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:26px;color:#002060;">2</div><div style="font-size:11px;color:#6B7280;">應力計</div></div>
+          <div style="color:#C9D2E3;font-size:16px;">=</div>
+          <div style="flex:1;"><div style="font-family:'Noto Serif TC',serif;font-weight:700;font-size:26px;color:#E00000;">16</div><div style="font-size:11px;color:#6B7280;">通道</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid #E6E8EC;border-top:2px solid #002060;border-radius:6px;padding:20px;box-shadow:0 1px 2px rgba(17,19,22,.04);margin-top:20px;">
+      <div style="font-size:15px;font-weight:700;color:#111316;margin-bottom:16px;">自動化告警流程</div>
+      <div style="display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:150px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px;background:#F7F8FA;border:1px solid #E6E8EC;border-radius:5px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#002060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 6 4-14 2 8h6"></path></svg><div style="font-size:13px;font-weight:600;color:#111316;">連續量測</div><div style="font-size:11.5px;line-height:1.55;color:#6B7280;">應力計每小時回傳讀值並換算絕對軸力。</div></div>
+        <div style="align-self:center;color:#9AA9CB;">→</div>
+        <div style="flex:1;min-width:150px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px;background:#F7F8FA;border:1px solid #E6E8EC;border-radius:5px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#002060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"></path><circle cx="9" cy="6" r="1.8" fill="#F7F8FA"></circle><circle cx="15" cy="12" r="1.8" fill="#F7F8FA"></circle><circle cx="8" cy="18" r="1.8" fill="#F7F8FA"></circle></svg><div style="font-size:13px;font-weight:600;color:#111316;">門檻比對</div><div style="font-size:11.5px;line-height:1.55;color:#6B7280;">代表值經三層過濾後與上下雙限比對。</div></div>
+        <div style="align-self:center;color:#9AA9CB;">→</div>
+        <div style="flex:1;min-width:150px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px;background:#FCE5E5;border:1px solid #F3B5B5;border-radius:5px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B30000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg><div style="font-size:13px;font-weight:600;color:#B30000;">觸發告警</div><div style="font-size:11.5px;line-height:1.55;color:#6B7280;">超越門檻即發出警戒／行動級告警通知。</div></div>
+        <div style="align-self:center;color:#9AA9CB;">→</div>
+        <div style="flex:1;min-width:150px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px;background:#F7F8FA;border:1px solid #E6E8EC;border-radius:5px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#002060" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="1.5"></rect><path d="M9 4V3h6v1"></path><path d="M8.5 13l2 2 4-4"></path></svg><div style="font-size:13px;font-weight:600;color:#111316;">現場複查</div><div style="font-size:11.5px;line-height:1.55;color:#6B7280;">安排勘查確認，研判是否規劃補拉。</div></div>
+      </div>
+    </div>
+    <p style="font-size:12px;line-height:1.7;color:#6B7280;margin:16px 0 0;">※ 服役監測階段之上限警戒（+15%、+30%）僅適用於施工張拉階段（避免過拉），本階段不觸發；判讀以下限門檻為準。</p>
+  </section>
+
+      <footer style="background:#001440;color:#fff;margin-top:48px;position:relative;overflow:hidden;">
+  <svg width="230" height="150" viewBox="0 0 24 18" fill="none" stroke="#ffffff" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;right:20px;bottom:-14px;opacity:.09;pointer-events:none;"><path d="M2 15h20"></path><path d="M3.5 15a8.5 6.5 0 0 1 17 0"></path><path d="M12 8.4V15"></path><path d="M12 8.4 5 15"></path><path d="M12 8.4 19 15"></path><path d="M8 8.9 8 15"></path><path d="M16 8.9 16 15"></path><circle cx="12" cy="8.4" r="0.5"></circle></svg>
+  <div style="max-width:1180px;margin:0 auto;padding:34px 28px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px;">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <img src="assets/logo-white.svg" alt="弘一" style="height:38px;width:auto;display:block;">
+      <div>
+        <div style="font-size:15px;font-weight:700;letter-spacing:.02em;">弘一工程顧問有限公司</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.65);margin-top:2px;">Hong-Yi Engineering Consultants Ltd.</div>
+      </div>
+    </div>
+    <div style="text-align:right;font-size:11.5px;color:rgba(255,255,255,.72);line-height:1.8;">
+      <div>案號　<span style="font-family:'JetBrains Mono',monospace;color:#fff;">HY-2026-0421-R3</span></div>
+      <div>資料截止　<span style="font-family:'JetBrains Mono',monospace;">2026/04/21</span></div>
+      <div>儀器型號　Geokon FD404 VW Datalogger × 8</div>
+    </div>
+  </div>
+  <div style="border-top:1px solid rgba(255,255,255,.12);">
+    <div style="max-width:1180px;margin:0 auto;padding:14px 28px;font-size:11px;color:rgba(255,255,255,.5);">※ 本報告曲線由 8 台 Geokon FD404 之 CSV 監測資料換算之絕對軸力繪製；代表值為 4 支應力計經三層過濾後之結果。</div>
+  </div>
+      </footer>
+      </div>
+    </main>
+  </div>
+</div>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#002060"></rect><g fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 71h56"></path><path d="M28 71a22 18 0 0 1 44 0"></path><path d="M50 49V71"></path><path d="M50 49 32 71"></path><path d="M50 49 68 71"></path></g><rect x="43.5" y="30" width="13" height="5" fill="#E00000"></rect></svg></template>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:900},&quot;showThresholds&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;圖表&quot;},&quot;smoothing&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.25,&quot;min&quot;:0,&quot;max&quot;:0.45,&quot;step&quot;:0.05,&quot;unit&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;圖表&quot;}}">
+class Component extends DCLogic {
+  state = { agg9:'day', cable10:'RX5', unit10:'day', activeSection:'overview', printing:false };
+  r9 = { RX5: React.createRef(), RY4: React.createRef(), RX7: React.createRef(), RY8: React.createRef() };
+  r10 = React.createRef();
+  rRX7 = React.createRef();
+  rCompare = React.createRef();
+  rMain = React.createRef();
+  SECTION_KEYS = ['overview','sec2','sec3','sec9','sec10','sec13','sec14','secRX7','sec15','sec16'];
+  SECTION_TITLES = { overview:'監測概要', sec2:'歷期監測沿革', sec3:'儀器配置', sec9:'鋼索代表性內力', sec10:'互動式資料探查', sec13:'訊號品質檢核', sec14:'索力百分比現況', secRX7:'鋼索預警系統', sec15:'彙整表', sec16:'CMS 監控系統' };
+  charts9 = {};
+  chart10 = null;
+  chartRX7 = null;
+  chartCompare = null;
+  order = ['RX5','RY4','RX7','RY8'];
+  CABLES = {
+    RX5:{ name:'RX5', type:'PV560', design:2024, endPct:0.701, drift:0.000, seed:11 },
+    RY4:{ name:'RY4', type:'PV560', design:2016, endPct:0.717, drift:0.002, seed:23 },
+    RX7:{ name:'RX7', type:'PV560', design:1966, endPct:0.692, drift:-0.014, seed:37 },
+    RY8:{ name:'RY8', type:'PV720', design:2523, endPct:0.690, drift:-0.007, seed:51 },
+  };
+  fmt = (n) => Math.round(n).toLocaleString('en-US');
+
+  mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+  agg(hourly, unit){
+    if(unit==='hour') return hourly;
+    const DAY=24*3600*1000;
+    const map=new Map();
+    for(const p of hourly){
+      const d=new Date(p.x); let key;
+      if(unit==='day') key=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())+DAY/2;
+      else if(unit==='week') key=Math.floor(p.x/(7*DAY))*(7*DAY)+3.5*DAY;
+      else key=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),15);
+      let arr=map.get(key); if(!arr){ arr=[]; map.set(key,arr); } arr.push(p.y);
+    }
+    return [...map.entries()].sort((a,b)=>a[0]-b[0]).map(([k,arr])=>({x:k, y:+(arr.reduce((s,v)=>s+v,0)/arr.length).toFixed(1)}));
+  }
+
+  ensureData(){
+    if(this.data) return;
+    const SRC = (typeof window!=='undefined') && window.CABLE_DATA;
+    if(!SRC) return;
+    const XY=(start,step,arr)=>{ const o=[]; for(let i=0;i<arr.length;i++){ if(arr[i]!=null) o.push({x:start+i*step, y:arr[i]}); } return o; };
+    const TX=(s)=>{ const o=[]; if(!s) return o; for(let i=0;i<s.t.length;i++){ if(s.y[i]!=null) o.push({x:s.t[i], y:s.y[i]}); } return o; };
+    this.data={}; this.summary={};
+    for(const key of this.order){
+      const C=SRC.cables[key]; if(!C) continue;
+      const h=C.hourly;
+      this.data[key]={
+        labels:C.labels,
+        rep:{ hour:XY(h.start,h.step,h.rep), day:TX(C.daily.rep), week:TX(C.weekly.rep), month:TX(C.monthly.rep) },
+        avg:{ hour:XY(h.start,h.step,h.avg), day:TX(C.daily.avg), month:TX(C.monthly.avg) },
+        channels:[0,1,2,3].map(i=>({ hour:XY(h.start,h.step,h.ch[i]), day:TX(C.daily.chDay[i]), month:TX(C.monthly.chMonth[i]) })),
+      };
+      this.summary[key]=C.summary;
+    }
+  }
+
+  statusOf(p){
+    if(p>=0.70) return { label:'基準區間 · 維持例行監測', color:'#1F7A4D', bg:'#E3F1EA' };
+    if(p>=0.67) return { label:'基準下緣 · 持續觀察', color:'#9A6B00', bg:'#FBF2DB' };
+    if(p>=0.60) return { label:'行動區間 · 規劃補拉', color:'#E00000', bg:'#FCE5E5' };
+    return { label:'破壞風險 · 立即處置', color:'#B30000', bg:'#FCE5E5' };
+  }
+
+  fmtTick(v,unit){ const d=new Date(v); const mm=String(d.getUTCMonth()+1).padStart(2,'0'); const dd=String(d.getUTCDate()).padStart(2,'0'); const yy=String(d.getUTCFullYear()).slice(2); return unit==='month'? yy+'/'+mm : mm+'/'+dd; }
+  fmtFull(v){ const d=new Date(v); const mm=String(d.getUTCMonth()+1).padStart(2,'0'); const dd=String(d.getUTCDate()).padStart(2,'0'); return d.getUTCFullYear()+'/'+mm+'/'+dd; }
+
+  buildC9(k){
+    const cv=this.r9[k].current; if(!cv||!window.Chart||!this.data||!this.data[k]) return;
+    if(this.charts9[k]){ this.charts9[k].destroy(); }
+    const c=this.CABLES[k]; const agg=this.state.agg9; const rep=this.data[k].rep[agg];
+    const x0=rep[0].x, x1=rep[rep.length-1].x;
+    const showThr=this.props.showThresholds??true; const tn=this.props.smoothing??0.25; const fmt=this.fmt;
+    const thr=(p,color)=>({ label:Math.round(p*100)+'% 門檻', data:[{x:x0,y:c.design*p},{x:x1,y:c.design*p}], borderColor:color, borderWidth:1.1, borderDash:[5,4], pointRadius:0, fill:false, tension:0 });
+    const ds=[];
+    if(showThr){ ds.push(thr(0.70,'rgba(46,76,148,.55)'), thr(0.67,'rgba(184,134,11,.65)'), thr(0.60,'rgba(224,0,0,.5)')); }
+    ds.push({ label:'代表性內力', data:rep, borderColor:'#002060', backgroundColor:'rgba(0,32,96,.06)', borderWidth:1.8, pointRadius:0, tension:tn, fill:'start' });
+    this.charts9[k]=new window.Chart(cv,{ type:'line', data:{datasets:ds}, options:{
+      parsing:false, normalized:true, responsive:true, maintainAspectRatio:false, animation:false,
+      interaction:{ mode:'index', intersect:false },
+      scales:{
+        x:{ type:'linear', grid:{color:'rgba(17,19,22,.045)'}, border:{color:'#E6E8EC'}, ticks:{ color:'#6B7280', maxTicksLimit:7, font:{size:10,family:"'JetBrains Mono'"}, callback:(v)=>this.fmtTick(v, agg==='week'?'day':agg) } },
+        y:{ suggestedMin:c.design*0.56, suggestedMax:c.design*0.78, grid:{color:'rgba(17,19,22,.05)'}, border:{display:false}, ticks:{ color:'#6B7280', maxTicksLimit:6, font:{size:10,family:"'JetBrains Mono'"}, callback:(v)=>Math.round(v) } }
+      },
+      plugins:{
+        legend:{display:false},
+        decimation:{ enabled:agg==='hour', algorithm:'lttb', samples:700 },
+        tooltip:{ backgroundColor:'#001440', titleColor:'#fff', bodyColor:'#E6EAF3', padding:10, cornerRadius:4, titleFont:{family:"'JetBrains Mono'",size:11}, bodyFont:{family:"'Noto Sans TC'",size:12}, callbacks:{ title:(it)=>it.length?this.fmtFull(it[0].parsed.x):'', label:(ctx)=>'　'+ctx.dataset.label+'　'+fmt(ctx.parsed.y)+' kN' } }
+      }
+    }});
+  }
+
+  buildC10(){
+    const cv=this.r10.current; if(!cv||!window.Chart||!this.data||!this.data[this.state.cable10]) return;
+    if(this.chart10){ this.chart10.destroy(); }
+    const k=this.state.cable10, unit=this.state.unit10; const c=this.CABLES[k]; const D=this.data[k];
+    const showThr=this.props.showThresholds??true; const tn=this.props.smoothing??0.25; const fmt=this.fmt;
+    const ref=(D.rep[unit]&&D.rep[unit].length)?D.rep[unit]:(D.channels[0][unit]||[]);
+    const x0=ref.length?ref[0].x:0, x1=ref.length?ref[ref.length-1].x:1;
+    const chColors=['#7E8DBE','#4F9C97','#B189BC','#9AA1AD'];
+    const ds=[];
+    [0,1,2,3].forEach(i=>{
+      ds.push({ label:(D.labels&&D.labels[i])||('通道 '+(i+1)), data:D.channels[i][unit], borderColor:chColors[i], borderWidth:1, pointRadius:0, tension:tn, fill:false });
+    });
+    const thr=(p,color)=>({ label:Math.round(p*100)+'% 門檻', data:[{x:x0,y:c.design*p},{x:x1,y:c.design*p}], borderColor:color, borderWidth:1, borderDash:[4,4], pointRadius:0, fill:false, tension:0 });
+    if(showThr){ ds.push(thr(0.70,'rgba(46,76,148,.4)'), thr(0.67,'rgba(184,134,11,.45)'), thr(0.60,'rgba(224,0,0,.4)')); }
+    ds.push({ label:'平均值', data:D.avg[unit], borderColor:'#C7791A', borderWidth:2.2, pointRadius:0, tension:tn, fill:false });
+    ds.push({ label:'代表值（最接近 70% 基準）', data:D.rep[unit], borderColor:'#002060', borderWidth:2.6, borderDash:[7,4], pointRadius:0, tension:tn, fill:false });
+    this.chart10=new window.Chart(cv,{ type:'line', data:{datasets:ds}, options:{
+      parsing:false, normalized:true, responsive:true, maintainAspectRatio:false, animation:false,
+      interaction:{ mode:'index', intersect:false },
+      scales:{
+        x:{ type:'linear', grid:{color:'rgba(17,19,22,.045)'}, border:{color:'#E6E8EC'}, ticks:{ color:'#6B7280', maxTicksLimit:9, font:{size:10,family:"'JetBrains Mono'"}, callback:(v)=>this.fmtTick(v,unit) } },
+        y:{ suggestedMin:c.design*0.55, suggestedMax:c.design*0.80, grid:{color:'rgba(17,19,22,.05)'}, border:{display:false}, ticks:{ color:'#6B7280', font:{size:10,family:"'JetBrains Mono'"}, callback:(v)=>Math.round(v) } }
+      },
+      plugins:{
+        legend:{ display:true, position:'bottom', labels:{ boxWidth:18, boxHeight:2, font:{size:11,family:"'Noto Sans TC'"}, color:'#3F4653', padding:13 } },
+        decimation:{ enabled:unit==='hour', algorithm:'lttb', samples:900 },
+        tooltip:{ backgroundColor:'#001440', titleColor:'#fff', bodyColor:'#E6EAF3', padding:10, cornerRadius:4, titleFont:{family:"'JetBrains Mono'",size:11}, bodyFont:{family:"'Noto Sans TC'",size:12}, callbacks:{ title:(it)=>it.length?this.fmtFull(it[0].parsed.x):'', label:(ctx)=>'　'+ctx.dataset.label+'　'+fmt(ctx.parsed.y)+' kN' } }
+      }
+    }});
+  }
+
+  computeQuality(){
+    if(this._quality) return this._quality;
+    const SRC=(typeof window!=='undefined')&&window.CABLE_DATA; if(!SRC) return null;
+    const N=SRC.meta.N||0; if(!N) return null;
+    const out=[];
+    for(const key of this.order){
+      const C=SRC.cables[key]; if(!C) continue;
+      const labels=C.labels||[];
+      C.hourly.ch.forEach((arr,i)=>{
+        let firstIdx=-1, lastIdx=-1;
+        for(let j=0;j<arr.length;j++){ if(arr[j]!=null){ if(firstIdx<0)firstIdx=j; lastIdx=j; } }
+        // count valid + internal gaps only within [firstIdx, lastIdx] (ignore pre-commission offline period)
+        let valid=0, longest=0, run=0;
+        if(firstIdx>=0){
+          for(let j=firstIdx;j<=lastIdx;j++){
+            if(arr[j]!=null){ valid++; if(run>longest)longest=run; run=0; }
+            else run++;
+          }
+        }
+        const span=(firstIdx>=0)?(lastIdx-firstIdx+1):0;
+        const excluded=Math.max(0,span-valid);
+        const rate=span>0?valid/span:0;
+        out.push({ cable:key, label:labels[i]||(key+'-'+(i+1)), valid, excluded, span, rate, longestGap:longest });
+      });
+    }
+    this._quality={ N, channels:out };
+    return this._quality;
+  }
+
+  getCriticalKey(){
+    if(!this.summary) return 'RX7';
+    let best=this.order[0], bestPct=Infinity;
+    for(const k of this.order){ const s=this.summary[k]; if(s&&s.pct!=null&&s.pct<bestPct){ bestPct=s.pct; best=k; } }
+    return best;
+  }
+
+  computeDecay(key){
+    this._decayCache = this._decayCache || {};
+    if(this._decayCache[key]) return this._decayCache[key];
+    if(!this.data||!this.data[key]) return null;
+    const design=this.CABLES[key].design;
+    const day=this.data[key].rep.day;
+    if(!day||day.length<5) return null;
+    const DAY=86400000; const t0=day[0].x;
+    const xs=day.map(p=>(p.x-t0)/DAY), ys=day.map(p=>p.y);
+    const n=xs.length, mx=xs.reduce((a,b)=>a+b,0)/n, my=ys.reduce((a,b)=>a+b,0)/n;
+    let sxy=0,sxx=0; for(let i=0;i<n;i++){ sxy+=(xs[i]-mx)*(ys[i]-my); sxx+=(xs[i]-mx)*(xs[i]-mx); }
+    const b=sxx?sxy/sxx:0, a=my-b*mx;
+    const fit=x=>a+b*x; const lastX=xs[n-1], lastDate=day[n-1].x;
+    const t70=design*0.70, t67=design*0.67, t60=design*0.60;
+    const dateAt=thr=>{ if(!b) return null; return t0+((thr-a)/b)*DAY; };
+    const xBreak=b?((t60-a)/b):null;
+    const xEnd = (b<0 && xBreak!=null && xBreak>lastX) ? Math.min(xBreak+25, lastX+430) : lastX+150;
+    const regProj=[{x:lastDate,y:Math.round(fit(lastX))},{x:t0+xEnd*DAY,y:Math.round(fit(xEnd))}];
+    const slopeMonth=b*30, slopePctMonth=slopeMonth/design*100;
+    this._decayCache[key]={ key, design, b, t0, lastDate, current:day[n-1].y, currentPct:day[n-1].y/design,
+      t70, t67, t60, dateAction:dateAt(t67), dateBreak:dateAt(t60),
+      slopeMonth, slopePctMonth, regProj, dayFull:day };
+    return this._decayCache[key];
+  }
+
+  buildDecayChart(){
+    const cv=this.rRX7 && this.rRX7.current; if(!cv||!window.Chart||!this.data) return;
+    const key=this.getCriticalKey(); if(!this.data[key]) return;
+    if(this.chartRX7){ this.chartRX7.destroy(); }
+    const d=this.computeDecay(key); if(!d) return;
+    const design=d.design; const tn=this.props.smoothing??0.25; const showThr=this.props.showThresholds??true; const fmt=this.fmt;
+    const x0=d.dayFull[0].x, x1=d.regProj[1].x;
+    const thr=(p,color)=>({ label:Math.round(p*100)+'% 門檻', data:[{x:x0,y:design*p},{x:x1,y:design*p}], borderColor:color, borderWidth:1.1, borderDash:[5,4], pointRadius:0, fill:false, tension:0 });
+    const ds=[];
+    if(showThr){ ds.push(thr(0.70,'rgba(122,166,255,.55)'), thr(0.67,'rgba(255,196,84,.65)'), thr(0.60,'rgba(255,90,90,.6)')); }
+    ds.push({ label:key+' 代表性內力（日均）', data:d.dayFull, borderColor:'#5AC8FA', backgroundColor:'rgba(90,200,250,.08)', borderWidth:2, pointRadius:0, tension:tn, fill:'start' });
+    ds.push({ label:'線性回歸推估', data:d.regProj, borderColor:'#FF3B3B', borderWidth:2.4, borderDash:[8,4], pointRadius:0, tension:0, fill:false });
+    this.chartRX7=new window.Chart(cv,{ type:'line', data:{datasets:ds}, options:{
+      parsing:false, normalized:true, responsive:true, maintainAspectRatio:false, animation:{duration:700,easing:'easeOutQuart'},
+      interaction:{ mode:'index', intersect:false },
+      scales:{
+        x:{ type:'linear', grid:{color:'rgba(255,255,255,.06)'}, border:{color:'rgba(255,255,255,.12)'}, ticks:{ color:'rgba(255,255,255,.55)', maxTicksLimit:8, font:{size:10,family:"'JetBrains Mono'"}, callback:(v)=>this.fmtTick(v,'month') } },
+        y:{ suggestedMin:design*0.55, suggestedMax:design*0.75, grid:{color:'rgba(255,255,255,.06)'}, border:{display:false}, ticks:{ color:'rgba(255,255,255,.55)', maxTicksLimit:6, font:{size:10,family:"'JetBrains Mono'"}, callback:(v)=>Math.round(v) } }
+      },
+      plugins:{
+        legend:{ display:true, position:'bottom', labels:{ boxWidth:18, boxHeight:2, font:{size:11,family:"'Noto Sans TC'"}, color:'rgba(255,255,255,.75)', padding:12 } },
+        tooltip:{ backgroundColor:'#000814', titleColor:'#fff', bodyColor:'#CFE0FF', padding:10, cornerRadius:4, titleFont:{family:"'JetBrains Mono'",size:11}, bodyFont:{family:"'Noto Sans TC'",size:12}, callbacks:{ title:(it)=>it.length?this.fmtFull(it[0].parsed.x):'', label:(ctx)=>'　'+ctx.dataset.label+'　'+fmt(ctx.parsed.y)+' kN' } }
+      }
+    }});
+  }
+
+  buildCompare(){
+    const cv=this.rCompare && this.rCompare.current; if(!cv||!window.Chart||!this.data) return;
+    if(this.chartCompare){ this.chartCompare.destroy(); }
+    const critical=this.getCriticalKey();
+    const tn=this.props.smoothing??0.25; const colors={ RX5:'#5B8DEF', RY4:'#3FC6B0', RX7:'#FF3B3B', RY8:'#C77DFF' };
+    const ds=this.order.map(k=>{
+      const D=this.data[k]; const design=this.CABLES[k].design;
+      const pctSeries=(D.rep.day||[]).map(p=>({ x:p.x, y:+(p.y/design*100).toFixed(2) }));
+      const isCrit=k===critical;
+      return { label:k+(isCrit?'（告警）':''), data:pctSeries, borderColor:isCrit?'#FF3B3B':colors[k], borderWidth:isCrit?2.8:1.3, pointRadius:0, tension:tn, fill:false };
+    });
+    this.chartCompare=new window.Chart(cv,{ type:'line', data:{datasets:ds}, options:{
+      parsing:false, normalized:true, responsive:true, maintainAspectRatio:false, animation:{duration:700,easing:'easeOutQuart'},
+      interaction:{ mode:'index', intersect:false },
+      scales:{
+        x:{ type:'linear', grid:{color:'rgba(255,255,255,.06)'}, border:{color:'rgba(255,255,255,.12)'}, ticks:{ color:'rgba(255,255,255,.55)', maxTicksLimit:8, font:{size:10,family:"'JetBrains Mono'"}, callback:(v)=>this.fmtTick(v,'month') } },
+        y:{ suggestedMin:60, suggestedMax:76, grid:{color:'rgba(255,255,255,.06)'}, border:{display:false}, ticks:{ color:'rgba(255,255,255,.55)', font:{size:10,family:"'JetBrains Mono'"}, callback:(v)=>v+'%' } }
+      },
+      plugins:{
+        legend:{ display:true, position:'bottom', labels:{ boxWidth:18, boxHeight:2, font:{size:11,family:"'Noto Sans TC'"}, color:'rgba(255,255,255,.75)', padding:12 } },
+        tooltip:{ backgroundColor:'#000814', titleColor:'#fff', bodyColor:'#CFE0FF', padding:10, cornerRadius:4, titleFont:{family:"'JetBrains Mono'",size:11}, bodyFont:{family:"'Noto Sans TC'",size:12}, callbacks:{ title:(it)=>it.length?this.fmtFull(it[0].parsed.x):'', label:(ctx)=>'　'+ctx.dataset.label+'　'+ctx.parsed.y.toFixed(1)+'%' } }
+      }
+    }});
+  }
+
+  buildAll(){ if(!window.Chart||!this.data) return; this.order.forEach(k=>this.buildC9(k)); this.buildC10(); this.buildDecayChart(); this.buildCompare(); }
+
+  _hardSize(canvas){
+    if(!canvas) return;
+    const parent=canvas.parentElement; if(!parent) return;
+    const w=parent.clientWidth, h=parent.clientHeight;
+    if(w>0 && h>0){ canvas.style.width=w+'px'; canvas.style.height=h+'px'; }
+  }
+
+  _resizeAll(){
+    try{
+      Object.keys(this.charts9).forEach(k=>{ const c=this.charts9[k]; if(c){ this._hardSize(c.canvas); c.resize(); } });
+      if(this.chart10){ this._hardSize(this.chart10.canvas); this.chart10.resize(); }
+      if(this.chartRX7){ this._hardSize(this.chartRX7.canvas); this.chartRX7.resize(); }
+      if(this.chartCompare){ this._hardSize(this.chartCompare.canvas); this.chartCompare.resize(); }
+    }catch(e){}
+  }
+
+  _boot(n){ n=n||0;
+    if(window.Chart && window.CABLE_DATA){
+      const ref=this.rMain && this.rMain.current;
+      const w = ref ? ref.clientWidth : 0;
+      if(w<=0 && n<200){ setTimeout(()=>this._boot(n+1),100); return; }
+      this.ensureData();
+      this.forceUpdate();
+      this.buildAll();
+      requestAnimationFrame(()=>this._resizeAll());
+      setTimeout(()=>this._resizeAll(),250);
+      this._watchdog();
+    } else if(n<200){ setTimeout(()=>this._boot(n+1),100); }
+  }
+
+  goToSection(key){
+    if(this.rMain && this.rMain.current) this.rMain.current.scrollTop = 0;
+    this.setState({activeSection:key});
+    const resize=()=>{ try{ this._resizeAll(); }catch(e){} };
+    requestAnimationFrame(resize);
+    setTimeout(resize,150);
+    setTimeout(resize,400);
+  }
+
+  // Late-mounted canvases (sections below sc-for tables whose row-count changes 0→N when
+  // data resolves) can get swapped by the runtime after the initial buildAll() call, orphaning
+  // their Chart.js instance. Retry-until-bound for the affected charts.
+  _watchdog(n){
+    n=n||0; if(n>12) return;
+    setTimeout(()=>{
+      const cvR=this.rRX7&&this.rRX7.current, cvC=this.rCompare&&this.rCompare.current;
+      const okR = cvR && window.Chart && !!window.Chart.getChart(cvR);
+      const okC = cvC && window.Chart && !!window.Chart.getChart(cvC);
+      if(!okR) this.buildDecayChart();
+      if(!okC) this.buildCompare();
+      if(!okR || !okC) this._watchdog(n+1);
+    }, 250*(n+1));
+  }
+
+  componentDidMount(){ this._boot(); }
+
+  componentDidUpdate(prevP, prevS){
+    if(!window.Chart||!this.data) return;
+    prevP=prevP||{}; prevS=prevS||{};
+    if(prevP.showThresholds!==this.props.showThresholds || prevP.smoothing!==this.props.smoothing){ this.buildAll(); return; }
+    if(prevS.agg9!==this.state.agg9){ this.order.forEach(k=>this.buildC9(k)); }
+    if(prevS.cable10!==this.state.cable10 || prevS.unit10!==this.state.unit10){ this.buildC10(); }
+  }
+
+  renderVals(){
+    this.ensureData();
+    const fmt=this.fmt;
+    const seg=(active,first)=>"appearance:none;cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-size:13px;font-weight:500;letter-spacing:.02em;padding:7px 17px;border:none;border-left:"+(first?'none':'1px solid #E6E8EC')+";background:"+(active?'#002060':'#fff')+";color:"+(active?'#fff':'#3F4653')+";transition:background .15s ease,color .15s ease;";
+
+    const agg9opts=[['hour','每小時'],['day','日均'],['week','週均']];
+    const agg9Btns=agg9opts.map(([u,l],i)=>({ label:l, style:seg(this.state.agg9===u, i===0), onClick:()=>this.setState({agg9:u}) }));
+    const unit10opts=[['hour','小時'],['day','日'],['month','月']];
+    const unit10Btns=unit10opts.map(([u,l],i)=>({ label:l, style:seg(this.state.unit10===u, i===0), onClick:()=>this.setState({unit10:u}) }));
+    const cable10Btns=this.order.map((k,i)=>({ label:k, style:seg(this.state.cable10===k, i===0), onClick:()=>this.setState({cable10:k}) }));
+
+    const loaded=!!this.data;
+    const c9={};
+    this.order.forEach(k=>{ const s=loaded&&this.summary[k]; c9[k]=(s&&s.pct!=null)?{ pctText:(s.pct*100).toFixed(1)+'%', currentText:fmt(s.current) }:{ pctText:'—', currentText:'—' }; });
+
+    const mapPos=p=>Math.max(0,Math.min(100,(p-0.58)/(0.74-0.58)*100));
+    const cards14=this.order.map(k=>{
+      const c=this.CABLES[k]; const s=loaded&&this.summary[k];
+      if(!s||s.pct==null){ return { name:k, type:c.type, designText:fmt(c.design), currentText:'—', pctText:'—', statusLabel:'資料載入中', statusColor:'#6B7280', statusBg:'#F1F2F5', z1:'width:0%;', z2:'width:0%;', z3:'width:0%;', z4:'width:100%;background:#F1F2F5;', needleStyle:'left:0%;display:none;', t60Style:'left:12.5%;', t67Style:'left:56.25%;', t70Style:'left:75%;' }; }
+      const st=this.statusOf(s.pct);
+      const z60=mapPos(.60), z67=mapPos(.67), z70=mapPos(.70), nd=mapPos(s.pct);
+      return {
+        name:k, type:c.type, designText:fmt(c.design), currentText:fmt(s.current), pctText:(s.pct*100).toFixed(1)+'%',
+        statusLabel:st.label, statusColor:st.color, statusBg:st.bg,
+        z1:'width:'+z60+'%;background:#F1B0B0;', z2:'width:'+(z67-z60)+'%;background:#FCE0E0;', z3:'width:'+(z70-z67)+'%;background:#FBF2DB;', z4:'width:'+(100-z70)+'%;background:#E3F1EA;',
+        needleStyle:'left:'+nd+'%;', t60Style:'left:'+z60+'%;', t67Style:'left:'+z67+'%;', t70Style:'left:'+z70+'%;'
+      };
+    });
+
+    const rows3=[
+      ['4401','RX5','Z32','一期','#18391 · #18392','2025/07/08 16:47','約 60 min','11.97','6,886'],
+      ['4402','RX5','Z17','一期','#18393 · #18394','2025/07/08 16:53','約 60 min','11.87','6,886'],
+      ['4403','RY4','Z11','一期','#18395 · #18396','2025/07/08 16:54','約 60 min','11.94','6,887'],
+      ['4404','RY4','Z22','一期','#18397 · #18398','2025/11/17 11:46','約 25–30 min','12.35','9,881'],
+      ['4405','RX7','Z2','二期','#18421 · #18422','2025/07/08 16:54','約 25–30 min','12.28','15,955'],
+      ['4406','RX7','Z15','二期','#18423 · #18424','2025/07/08 16:08','約 25–30 min','12.43','15,998'],
+      ['4407','RY8','Z7','二期','#18425 · #18426','2025/11/17 11:49','約 25–30 min','11.93','8,749'],
+      ['4408','RY8','Z26','二期','#18427 · #18428','2025/11/17 14:02','約 25–30 min','12.30','8,589'],
+    ].map(r=>({ sn:r[0], cable:r[1], pier:r[2], phase:r[3], sensors:r[4], first:r[5], interval:r[6], batt:r[7], recs:r[8], phaseStyle: r[3]==='一期'?'background:#E6EAF3;color:#2E4C94;':'background:#F1F2F5;color:#6B7280;' }));
+
+    const rows15=this.order.map(k=>{
+      const cc=this.CABLES[k]; const s=loaded&&this.summary[k];
+      const has=!!(s&&s.pct!=null); const st=has?this.statusOf(s.pct):{ label:'—', color:'#6B7280', bg:'#F1F2F5' };
+      const alert=has&&s.pct<0.67;
+      return { name:k, type:cc.type, designText:fmt(cc.design), t70Text:fmt(cc.design*0.70), t67Text:fmt(cc.design*0.67), t60Text:fmt(cc.design*0.60),
+        currentText:has?fmt(s.current):'—', pctText:has?(s.pct*100).toFixed(1)+'%':'—',
+        statusLabel:st.label, statusColor:st.color, statusBg:st.bg,
+        curStyle: alert?'color:#B30000;font-weight:700;':'font-weight:600;' };
+    });
+
+    const c=this.CABLES[this.state.cable10];
+    const info10={ name:c.name, type:c.type, design:fmt(c.design), t70:fmt(c.design*0.70), t67:fmt(c.design*0.67), t60:fmt(c.design*0.60) };
+
+    const q=this.computeQuality();
+    const fmtGap=(h)=>{ if(h<24) return h+' 小時'; const d=Math.round(h/24); return d+' 天'; };
+    const quality13 = q ? q.channels.map(ch=>{
+      const st = ch.rate>=0.98 ? {label:'優良',color:'#1F7A4D',bg:'#E3F1EA'} : ch.rate>=0.90 ? {label:'良好',color:'#2E4C94',bg:'#E6EAF3'} : ch.rate>=0.70 ? {label:'普通',color:'#9A6B00',bg:'#FBF2DB'} : {label:'不佳',color:'#B30000',bg:'#FCE5E5'};
+      return { label:ch.label, cable:ch.cable, rateText:(ch.rate*100).toFixed(1)+'%', ratePct:ch.rate*100,
+        validText:fmt(ch.valid), excludedText:fmt(ch.excluded), gapText:ch.longestGap>0?fmtGap(ch.longestGap):'無',
+        barStyle:'width:'+(ch.rate*100).toFixed(1)+'%;background:'+(ch.rate>=0.90?'#2E6B4F':ch.rate>=0.70?'#B8860B':'#B30000')+';',
+        stLabel:st.label, stColor:st.color, stBg:st.bg };
+    }) : [];
+    const qAvg = q && q.channels.length ? (q.channels.reduce((s,c)=>s+c.rate,0)/q.channels.length*100) : null;
+    const qMeta = q ? { avgText: qAvg!=null?qAvg.toFixed(1)+'%':'—', good: q.channels.filter(c=>c.rate>=0.90).length, total:q.channels.length,
+      worst: q.channels.slice().sort((a,b)=>a.rate-b.rate)[0] } : null;
+    const qSummary = qMeta ? { avgText:qMeta.avgText, goodText:qMeta.good+' / '+qMeta.total,
+      worstText: qMeta.worst?(qMeta.worst.label+'（'+(qMeta.worst.rate*100).toFixed(1)+'%）'):'—' } : { avgText:'—', goodText:'—', worstText:'—' };
+
+    const criticalKey = loaded ? this.getCriticalKey() : 'RX7';
+    const dR = loaded ? this.computeDecay(criticalKey) : null;
+    const decay = dR ? {
+      key: criticalKey,
+      pctText:(dR.currentPct*100).toFixed(1)+'%', currentText:fmt(dR.current),
+      declining: dR.b<0,
+      rateText:(dR.slopePctMonth>=0?'+':'')+dR.slopePctMonth.toFixed(2)+'%',
+      rateKNText:(dR.slopeMonth>=0?'+':'−')+fmt(Math.abs(dR.slopeMonth)),
+      actionText: dR.dateAction? this.fmtFull(dR.dateAction):'—',
+      breakText: (dR.b<0 && dR.dateBreak && dR.dateBreak>dR.lastDate)? this.fmtFull(dR.dateBreak):'尚無推估',
+      t67Text:fmt(dR.t67), t60Text:fmt(dR.t60)
+    } : { key:'RX7', pctText:'—', currentText:'—', declining:false, rateText:'—', rateKNText:'—', actionText:'—', breakText:'—', t67Text:'—', t60Text:'—' };
+
+    const healthCards = this.order.map(k=>{
+      const cc=this.CABLES[k]; const s=loaded&&this.summary[k]; const has=!!(s&&s.pct!=null);
+      const isCrit = has && k===criticalKey;
+      let level, dotColor, glow, label;
+      if(!has){ level='loading'; dotColor='rgba(255,255,255,.3)'; glow='none'; label='載入中'; }
+      else if(s.pct>=0.70){ level='normal'; dotColor='#3FE07A'; glow='none'; label='正常'; }
+      else if(s.pct>=0.67){ level='watch'; dotColor='#FFC454'; glow='none'; label='觀察'; }
+      else { level='alert'; dotColor='#FF3B3B'; glow='0 0 0 0 rgba(255,59,59,.5)'; label='告警'; }
+      return {
+        name:k, pctText:has?(s.pct*100).toFixed(1)+'%':'—', level, dotColor, label, isCrit,
+        cardStyle: isCrit
+          ? 'background:linear-gradient(180deg,rgba(255,59,59,.14),rgba(255,59,59,.03));border:1px solid rgba(255,59,59,.55);box-shadow:0 0 28px rgba(255,59,59,.25),inset 0 0 0 1px rgba(255,59,59,.08);'
+          : 'background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);',
+        dotAnim: level==='alert' ? 'animation:hyPulseRing 1.6s cubic-bezier(.4,0,.6,1) infinite;' : (level==='watch' ? 'animation:hyPulseDot 2s ease-in-out infinite;' : '')
+      };
+    });
+    const criticalName = criticalKey;
+
+    const printPage=()=>{
+      this.setState({printing:true});
+      const doPrint=()=>{ try{ this._resizeAll(); }catch(e){} setTimeout(()=>window.print(),150); };
+      requestAnimationFrame(()=>requestAnimationFrame(doPrint));
+      const onAfter=()=>{ this.setState({printing:false}); window.removeEventListener('afterprint', onAfter); };
+      window.addEventListener('afterprint', onAfter);
+    };
+
+    const seg2=(active,first)=>"display:flex;align-items:center;gap:10px;width:100%;text-align:left;appearance:none;cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-size:13px;font-weight:"+(active?'600':'500')+";padding:9px 12px;border-radius:4px;border:none;border-left:3px solid "+(active?'#E00000':'transparent')+";background:"+(active?'rgba(255,255,255,.08)':'transparent')+";color:"+(active?'#fff':'rgba(255,255,255,.68)')+";transition:background .15s,color .15s;"+(first?'':'');
+    const nav={};
+    this.SECTION_KEYS.forEach(key=>{
+      nav[key] = { onClick:()=>this.goToSection(key), style:seg2(this.state.activeSection===key) };
+    });
+    const vis={};
+    this.SECTION_KEYS.forEach(key=>{ vis[key] = (this.state.printing || this.state.activeSection===key) ? 'block' : 'none'; });
+    const currentTitle = this.SECTION_TITLES[this.state.activeSection] || '';
+
+    return { agg9Btns, unit10Btns, cable10Btns, c9, cards14, rows3, rows15, info10, decay, healthCards, criticalName, quality13, qSummary, printPage, nav, vis, currentTitle, rMain:this.rMain, r9:this.r9, r10:this.r10, rRX7:this.rRX7, rCompare:this.rCompare };
+  }
+}
+</script>
+</body>
+</html>

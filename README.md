@@ -4,9 +4,13 @@
 
 ## 🔗 線上瀏覽
 
-👉 **[點此開啟報告](https://oxsum324.github.io/kaohsiung-arena-cable-monitor/)**
-
+### 現行版本（真實資料，Plotly 版）
+👉 **[點此開啟](https://oxsum324.github.io/kaohsiung-arena-cable-monitor/)**
 > 首次載入可能需 30~60 秒（檔案 60 MB，含完整互動圖表）。
+
+### 🎨 設計預覽版（Push 1，模擬資料）
+👉 **[點此開啟預覽](https://oxsum324.github.io/kaohsiung-arena-cable-monitor/preview/)**
+> 依弘一工程顧問設計團隊高保真設計稿製作；本階段使用模擬資料，後續將接入真實 CSV。
 
 ## 內容架構
 
