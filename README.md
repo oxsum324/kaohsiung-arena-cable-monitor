@@ -2,16 +2,16 @@
 
 互動式 HTML 報告，整合 8 台 FD404 Datalogger 資料、校驗報告公式換算之絕對軸力、跨感測器交叉驗證之品質檢核等內容。
 
-## 🔗 線上瀏覽
+## 🔒 線上瀏覽（已停用）
 
-👉 **[點此開啟](https://oxsum324.github.io/kaohsiung-arena-cable-monitor/)**
+GitHub Pages 已停用，本報告目前不對外公開。如需查看，請直接開啟 repo 內的 `index.html`
+（或 `legacy/index.html` 為舊版 Plotly 版）。
 
 依弘一工程顧問設計團隊高保真設計稿製作（弘一 CI：深藍 + 紅重點）；真實 CSV 監測資料。
 內部儀表板 + 預警系統（含線性回歸趨勢預估）；支援 A4 分頁列印。
 
 ### 舊版（Plotly，保留備查）
-👉 [點此開啟](https://oxsum324.github.io/kaohsiung-arena-cable-monitor/legacy/)
-> 完整 16 章資料展示版本，含逐鋼索軸力變化圖、連續監測時間序列等現行版未收錄之細節章節。
+完整 16 章資料展示版本，含逐鋼索軸力變化圖、連續監測時間序列等現行版未收錄之細節章節。
 
 ## 內容架構
 
