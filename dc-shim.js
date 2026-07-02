@@ -18,6 +18,12 @@
  *       - `ref="{{ refObj }}"` → assigns element to refObj.current
  *       - `<sc-for list="{{ items }}" as="var" ...>...</sc-for>`
  *          → unrolls one copy per item, inner interpolation uses local `var`
+ *       - `<script type="text/sc-for" data-list="{{ items }}" data-as="var">...</script>`
+ *          → same, for loop bodies made of <tr>/<td>/<option> etc. A literal
+ *          <sc-for> in that position gets foster-parented out of its
+ *          <table>/<select> by the browser's own HTML parser before any JS
+ *          runs; wrapping the body text in a <script> (never parsed as
+ *          markup, and explicitly allowed inside table/select) sidesteps that.
  *
  * On any `setState`, the entire <x-dc> subtree is re-rendered from the
  * cached original template. Elements bound via `ref="{{ }}"` are identity-
@@ -83,9 +89,21 @@
   function _processNode(node, ctx) {
     if (!node) return;
 
-    // sc-for expansion
+    // sc-for expansion (element form)
     if (node.nodeType === 1 && node.tagName && node.tagName.toLowerCase() === "sc-for") {
       _expandForEach(node, ctx);
+      return;
+    }
+
+    // sc-for expansion (script-tag form). Used wherever the loop body is
+    // <tr>/<td>/<option> etc: the browser's native HTML parser foster-parents
+    // those out of their <table>/<select> the instant it sees a non-table
+    // <sc-for> tag in that context, corrupting the template before any of our
+    // JS ever runs. <script> IS allowed inside <table>/<tbody>/<select>, and
+    // its text content is never parsed as markup, so the loop body survives
+    // untouched until we expand it here ourselves.
+    if (node.nodeType === 1 && node.tagName === "SCRIPT" && node.getAttribute("type") === "text/sc-for") {
+      _expandForEachScript(node, ctx);
       return;
     }
 
@@ -170,23 +188,40 @@
     }
   }
 
+  // HTML5 parsing has strict content-model rules inside <table> (and <select>):
+  // assigning innerHTML on a plain <div> silently drops stray <tr>/<td>/<option>
+  // tags (foster-parenting), even though the string looks fine. Pick a temp
+  // container whose own content model actually accepts the loop's row markup.
+  function _tempContainerFor(parent) {
+    var tag = parent && parent.tagName;
+    if (tag === "TABLE" || tag === "TBODY" || tag === "THEAD" || tag === "TFOOT") return document.createElement("tbody");
+    if (tag === "TR") return document.createElement("tr");
+    if (tag === "SELECT" || tag === "OPTGROUP") return document.createElement("select");
+    return document.createElement("div");
+  }
+
   function _expandForEach(scNode, ctx) {
-    var listAttr = scNode.getAttribute("list") || "";
-    var asName = scNode.getAttribute("as") || "it";
-    var lm = listAttr.match(/^{{\s*([\s\S]+?)\s*}}$/);
-    if (!lm) { scNode.parentNode.removeChild(scNode); return; }
+    _expandLoop(scNode.getAttribute("list"), scNode.getAttribute("as"), scNode.innerHTML, scNode, ctx);
+  }
+
+  function _expandForEachScript(scriptNode, ctx) {
+    _expandLoop(scriptNode.getAttribute("data-list"), scriptNode.getAttribute("data-as"), scriptNode.textContent, scriptNode, ctx);
+  }
+
+  function _expandLoop(listAttr, asName, innerHTML, holderNode, ctx) {
+    asName = asName || "it";
+    var lm = (listAttr || "").match(/^{{\s*([\s\S]+?)\s*}}$/);
+    if (!lm) { holderNode.parentNode.removeChild(holderNode); return; }
     var items;
     try { items = _evalExpr(lm[1], ctx); } catch (e) { items = []; }
-    if (!items || !items.length) { scNode.parentNode.removeChild(scNode); return; }
+    if (!items || !items.length) { holderNode.parentNode.removeChild(holderNode); return; }
 
-    // Take inner template as HTML string
-    var innerHTML = scNode.innerHTML;
-    var parent = scNode.parentNode;
+    var parent = holderNode.parentNode;
     var anchor = document.createComment("sc-for");
-    parent.replaceChild(anchor, scNode);
+    parent.replaceChild(anchor, holderNode);
 
     for (var i = 0; i < items.length; i++) {
-      var tmp = document.createElement("div");
+      var tmp = _tempContainerFor(parent);
       tmp.innerHTML = innerHTML;
       var localCtx = Object.assign({}, ctx);
       localCtx[asName] = items[i];

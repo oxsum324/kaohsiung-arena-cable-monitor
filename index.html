@@ -197,8 +197,7 @@
           </tr>
         </thead>
         <tbody>
-          <sc-for list="{{ rows3 }}" as="r" hint-placeholder-count="0">
-            <tr style="border-top:1px solid #E6E8EC;">
+          <script type="text/sc-for" data-list="{{ rows3 }}" data-as="r"><tr style="border-top:1px solid #E6E8EC;">
               <td style="padding:11px 14px;font-family:'JetBrains Mono',monospace;font-weight:600;color:#002060;">FD404-{{ r.sn }}</td>
               <td style="padding:11px 14px;color:#111316;"><b>{{ r.cable }}</b> · {{ r.pier }}</td>
               <td style="padding:11px 14px;"><span style="display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;{{ r.phaseStyle }}">{{ r.phase }}</span></td>
@@ -207,8 +206,7 @@
               <td style="padding:11px 14px;color:#3F4653;">{{ r.interval }}</td>
               <td style="padding:11px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;color:#111316;">{{ r.batt }}</td>
               <td style="padding:11px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;font-weight:500;color:#111316;">{{ r.recs }}</td>
-            </tr>
-          </sc-for>
+            </tr></script>
         </tbody>
       </table>
       </div>
@@ -352,8 +350,7 @@
           </tr>
         </thead>
         <tbody>
-          <sc-for list="{{ quality13 }}" as="q" hint-placeholder-count="0">
-            <tr style="border-top:1px solid #E6E8EC;">
+          <script type="text/sc-for" data-list="{{ quality13 }}" data-as="q"><tr style="border-top:1px solid #E6E8EC;">
               <td style="padding:11px 14px;font-family:'JetBrains Mono',monospace;font-weight:600;color:#002060;">{{ q.label }}</td>
               <td style="padding:11px 14px;">
                 <div style="display:flex;align-items:center;gap:10px;">
@@ -365,8 +362,7 @@
               <td style="padding:11px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;color:#6B7280;">{{ q.excludedText }}</td>
               <td style="padding:11px 14px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;color:#3F4653;">{{ q.gapText }}</td>
               <td style="padding:11px 14px;text-align:center;"><span style="display:inline-block;font-size:11px;font-weight:600;padding:2px 10px;border-radius:999px;background:{{ q.stBg }};color:{{ q.stColor }};">{{ q.stLabel }}</span></td>
-            </tr>
-          </sc-for>
+            </tr></script>
         </tbody>
       </table>
       </div>
@@ -546,8 +542,7 @@
           </tr>
         </thead>
         <tbody>
-          <sc-for list="{{ rows15 }}" as="r" hint-placeholder-count="0">
-            <tr style="border-top:1px solid #E6E8EC;">
+          <script type="text/sc-for" data-list="{{ rows15 }}" data-as="r"><tr style="border-top:1px solid #E6E8EC;">
               <td style="padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:#002060;">{{ r.name }}</td>
               <td style="padding:12px 14px;color:#3F4653;">{{ r.type }}</td>
               <td style="padding:12px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;font-weight:500;color:#111316;">{{ r.designText }}</td>
@@ -557,8 +552,7 @@
               <td style="padding:12px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;{{ r.curStyle }}">{{ r.currentText }}</td>
               <td style="padding:12px 14px;text-align:right;font-family:'Noto Serif TC',serif;font-variant-numeric:tabular-nums;{{ r.curStyle }}">{{ r.pctText }}</td>
               <td style="padding:12px 14px;"><span style="display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap;background:{{ r.statusBg }};color:{{ r.statusColor }};">{{ r.statusLabel }}</span></td>
-            </tr>
-          </sc-for>
+            </tr></script>
         </tbody>
       </table>
       </div>
